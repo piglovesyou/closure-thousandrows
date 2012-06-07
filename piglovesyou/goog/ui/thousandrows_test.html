@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>goog.ui.Scroller</title>
+  <link rel="stylesheet" href="../../../third_party/piglovesyou/goog/css/scroller.css" />
+
+  <script src="../../../closure-library-read-only/closure/goog/base.js"></script>
+  <script type="text/javascript">
+    goog.require('goog.ui.Slider');
+    goog.require('goog.ui.Control');
+
+    goog.require('goog.testing.MockClock');
+    goog.require('goog.testing.events');
+    goog.require('goog.testing.jsunit');
+    goog.require('goog.testing.recordFunction');
+  </script>
+
+  <script src="../../../third_party/piglovesyou/goog/ui/scroller.js"></script>
+  <script src="../ui/virtualscroller.js"></script>
+  <script src="../ui/thousandrows.js"></script>
+  <script type="text/javascript">
+    goog.require('goog.ui.ThousandRows');
+  </script>
+
+  <style type="text/css">
+    #my-thousandrows {
+      height: 200px;
+      width: 400px;
+      border: 1px #999 solid;
+    }
+    #my-thousandrows .item {
+      padding: 10px;
+      border-bottom: 1px #999 solid;
+      background: lightblue;
+    }
+    #my-thousandrows .item:last-child {
+      border-bottom: none;
+    }
+  </style>
+
+</head>
+<body>
+
+  <div id="sandbox"></div>
+  <script>
+    function testSomething () {}
+  </script>
+
+</body>
+</html>

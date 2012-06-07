@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>goog.ui.Scroller</title>
+  <link rel="stylesheet" href="../../../third_party/piglovesyou/goog/css/scroller.css" />
+
+  <script src="../../../closure-library-read-only/closure/goog/base.js"></script>
+  <script type="text/javascript">
+    goog.require('goog.ui.Slider');
+    goog.require('goog.ui.Control');
+  </script>
+
+  <script src="../../../third_party/piglovesyou/goog/ui/scroller.js"></script>
+  <script src="../ui/virtualscroller.js"></script>
+  <script src="../ui/thousandrows.js"></script>
+  <script type="text/javascript">
+    goog.require('goog.ui.ThousandRows');
+  </script>
+
+  <style type="text/css">
+    #my-thousandrows {
+      height: 200px;
+      width: 400px;
+      border: 1px #999 solid;
+    }
+    #my-thousandrows .item {
+      padding: 10px;
+      border-bottom: 1px #999 solid;
+      background: lightblue;
+    }
+    #my-thousandrows .item:last-child {
+      border-bottom: none;
+    }
+  </style>
+
+</head>
+<body>
+
+  <h1>goog.ui.ThousandRows</h1>
+
+  <div id="my-thousandrows" class="goog-scroller">
+    <div class="goog-scroller-container">
+      <div class="item">item1</div>
+      <div class="item">item2</div>
+      <div class="item">item3</div>
+      <div class="item">item4</div>
+      <div class="item">item5</div>
+      <div class="item">item6</div>
+      <div class="item">item7</div>
+      <div class="item">item8</div>
+      <div class="item">item9</div>
+      <div class="item">item10</div>
+      <div class="item">item11</div>
+      <div class="item">item12</div>
+    </div>
+  </div>
+
+  <script>
+    var thousandrows = new goog.ui.ThousandRows;
+    var elm = goog.dom.getElement('my-thousandrows');
+    thousandrows.decorate(elm);
+  </script>
+
+</body>
+</html>
