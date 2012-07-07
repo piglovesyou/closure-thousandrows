@@ -7,9 +7,11 @@
 
   <script src="../../../closure-library-read-only/closure/goog/base.js"></script>
   <script type="text/javascript">
-    goog.require('goog.iter');
     goog.require('goog.ui.Slider');
     goog.require('goog.ui.Control');
+
+    goog.require('goog.iter');
+    goog.require('goog.math.Range');
     goog.require('goog.Timer');
   </script>
 
@@ -48,7 +50,7 @@
   </div>
 
   <script>
-    var thousandrows = new goog.ui.ThousandRows(38, 20, 100);
+    var thousandrows = new goog.ui.ThousandRows(38, 12, 100);
 
     var elm = goog.dom.getElement('my-thousandrows');
     thousandrows.decorate(elm);

@@ -3,7 +3,9 @@ goog.provide('goog.ui.ThousandRows');
 
 goog.require('goog.ui.VirtualScroller');
 goog.require('goog.iter');
+goog.require('goog.math.Range');
 goog.require('goog.Timer');
+
 
 var dummy = {};
 dummy.i_ = 0;
@@ -46,6 +48,7 @@ goog.ui.ThousandRows = function (rowHeight, rowCountInPage, totalRowCount, opt_d
 goog.inherits(goog.ui.ThousandRows, goog.ui.VirtualScroller);
 
 
+/** @inheritDoc */
 goog.ui.ThousandRows.prototype.enterDocument = function () {
   goog.base(this, 'enterDocument');
   this.adjustScrollTop();
@@ -55,49 +58,97 @@ goog.ui.ThousandRows.prototype.enterDocument = function () {
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.adjustScrollTop = function (orient) {
 
-  var pageIndex = Math.floor(this.getVirtualScrollTop() / this.getPageHeight_());
-  var actualTopMargin = this.getVirtualScrollTop() % this.getPageHeight_();
+  this.renderPages_();
 
-  var page = this.getPage_(pageIndex);
-
-  this.getContentElement().scrollTop = actualTopMargin;
+  this.getContentElement().scrollTop = this.getMargin_();
 };
 
 
-goog.ui.ThousandRows.prototype.getPage_ = function (pageIndex) {
-  var page;
-  this.forEachChild(function (child) {
-    if (pageIndex == child.getId()) {
-      page = child;
-    } else {
-      this.removeChild(child, true);
+goog.ui.ThousandRows.prototype.renderPages_ = function () {
+  var range = this.getPageRange_();
+  goog.array.forEach(this.getChildIds(), function (id) {
+    if (!goog.math.Range.containsPoint(range, +id)) {
+       this.removeChild(id, true);
     }
   }, this);
+  goog.iter.forEach(goog.iter.range(range.start, range.end + 1), function (i) {
+    this.createPage_(i);
+  }, this);
+
+  console.log(this.getChildIds());
+};
+
+
+/**
+ * @param {number} pageIndex
+ * @return {goog.ui.ThousandRows.Page}
+ */
+goog.ui.ThousandRows.prototype.createPage_ = function (pageIndex) {
+  pageIndex = pageIndex.toString()
+  var page = this.getChild(pageIndex);
   if (!page) {
-    page = new goog.ui.ThousandRows.Page(pageIndex.toString(),
+    page = new goog.ui.ThousandRows.Page(pageIndex,
         this.rowCountInPage_, this.rowHeight_);
-    this.addChild(page, true);
+
+    // insert right position in DOM.
+    var inserted = !!(goog.array.find(this.getChildIds(), function (id, index) {
+      if (+id > pageIndex) {
+        this.addChildAt(page, index, true);
+        return true;
+      }
+    }, this));
+    if (!inserted) this.addChild(page, true);
   }
   return page;
 };
 
 
-goog.ui.ThousandRows.prototype.getPageHeight_ = function () {
-  return this.rowHeight_ * this.rowCountInPage_;
-};
-
 /**
  * @return {goog.math.Range}
  */
 goog.ui.ThousandRows.prototype.getPageRange_ = function () {
-  // this.
+  var pageIndex = this.getPageIndex_();
+  return new goog.math.Range(
+      Math.max(0, pageIndex - 1),
+      Math.min(this.getMaxPageIndex_(), pageIndex + 1));
 };
 
-goog.ui.ThousandRows.prototype.parseRecords = function (records) {
-  goog.array.forEach(records, function (record) {
-    
-  });
+
+/**
+ * @return {number}
+ */
+goog.ui.ThousandRows.prototype.getPageIndex_ = function () {
+  return Math.floor(this.getVirtualScrollTop() / this.getPageHeight_());
 };
+
+
+/**
+ * @return {number}
+ */
+goog.ui.ThousandRows.prototype.getMargin_ = function () {
+  var margin = this.getVirtualScrollTop() % this.getPageHeight_();
+  if (this.getPageIndex_() >= 1) {
+    margin += this.getPageHeight_();
+  }
+  return margin;
+};
+
+
+/**
+ * @return {number}
+ */
+goog.ui.ThousandRows.prototype.getPageHeight_ = function () {
+  return this.rowHeight_ * this.rowCountInPage_;
+};
+
+
+/**
+ * @return {number}
+ */
+goog.ui.ThousandRows.prototype.getMaxPageIndex_ = function () {
+  return Math.ceil(this.totalRowCount_ / this.rowCountInPage_);
+};
+
 
 
 
@@ -122,6 +173,8 @@ goog.ui.ThousandRows.Page = function (pageIndex, rowCount, rowHeight, opt_domHel
 };
 goog.inherits(goog.ui.ThousandRows.Page, goog.ui.Component);
 
+
+/** @inheritDoc */
 goog.ui.ThousandRows.Page.prototype.createDom = function () {
   var elm = this.getDomHelper().createDom('div', '--page--');
   this.setElementInternal(elm);
@@ -142,6 +195,7 @@ goog.ui.ThousandRows.Row = function (height, opt_domHelper) {
 goog.inherits(goog.ui.ThousandRows.Row, goog.ui.Component);
 
 
+/** @inheritDoc */
 goog.ui.ThousandRows.Row.prototype.createDom = function () {
   var elm = this.getDomHelper().createDom('div', {
     style: 'height: ' + this.height_ + 'px'
