@@ -8,26 +8,26 @@ goog.require('goog.Timer');
 
 
 var dummy = {};
-dummy.i_ = 0;
-dummy.provideRowsData = function (fn) {
-  setTimeout(function () {
-    fn({
+dummy.provideRowsData = (function () {
+  var counter = 0;
+  return function () {
+    return {
       meta: { total: 120 },
       records: [
-        { id_: 'id:' + dummy.i_, title: 'title' + dummy.i_++ },
-        { id_: 'id:' + dummy.i_, title: 'title' + dummy.i_++ },
-        { id_: 'id:' + dummy.i_, title: 'title' + dummy.i_++ },
-        { id_: 'id:' + dummy.i_, title: 'title' + dummy.i_++ },
-        { id_: 'id:' + dummy.i_, title: 'title' + dummy.i_++ },
-        { id_: 'id:' + dummy.i_, title: 'title' + dummy.i_++ },
-        { id_: 'id:' + dummy.i_, title: 'title' + dummy.i_++ },
-        { id_: 'id:' + dummy.i_, title: 'title' + dummy.i_++ },
-        { id_: 'id:' + dummy.i_, title: 'title' + dummy.i_++ },
-        { id_: 'id:' + dummy.i_, title: 'title' + dummy.i_++ }
+        { id_: 'id:' + counter, title: 'title' + counter++ },
+        { id_: 'id:' + counter, title: 'title' + counter++ },
+        { id_: 'id:' + counter, title: 'title' + counter++ },
+        { id_: 'id:' + counter, title: 'title' + counter++ },
+        { id_: 'id:' + counter, title: 'title' + counter++ },
+        { id_: 'id:' + counter, title: 'title' + counter++ },
+        { id_: 'id:' + counter, title: 'title' + counter++ },
+        { id_: 'id:' + counter, title: 'title' + counter++ },
+        { id_: 'id:' + counter, title: 'title' + counter++ },
+        { id_: 'id:' + counter, title: 'title' + counter++ }
       ]
-    });
-  }, 500);
-};
+    };
+  };
+})();
 
 
 
@@ -48,11 +48,25 @@ goog.ui.ThousandRows = function (rowHeight, rowCountInPage, totalRowCount, opt_d
 goog.inherits(goog.ui.ThousandRows, goog.ui.VirtualScroller);
 
 
+/**
+ * @type {string}
+ */
+goog.ui.ThousandRows.baseCssName = 'goog-thousandrows';
+
+
+/** @inheritDoc */
+goog.ui.ThousandRows.prototype.decorateInternal = function (element) {
+  goog.dom.classes.add(element, goog.ui.ThousandRows.baseCssName);
+  goog.base(this, 'decorateInternal', element);
+};
+
+
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.enterDocument = function () {
   goog.base(this, 'enterDocument');
   this.adjustScrollTop();
 };
+
 
 
 /** @inheritDoc */
@@ -84,8 +98,7 @@ goog.ui.ThousandRows.prototype.renderPages_ = function () {
  * @return {goog.ui.ThousandRows.Page}
  */
 goog.ui.ThousandRows.prototype.createPage_ = function (pageIndex) {
-  pageIndex = pageIndex.toString()
-  var page = this.getChild(pageIndex);
+  var page = this.getChild('' + pageIndex);
   if (!page) {
     page = new goog.ui.ThousandRows.Page(pageIndex,
         this.rowCountInPage_, this.rowHeight_);
@@ -160,14 +173,16 @@ goog.ui.ThousandRows.prototype.getMaxPageIndex_ = function () {
 
 /**
  * @constructor
+ * @param {string} pageIndex
  */
 goog.ui.ThousandRows.Page = function (pageIndex, rowCount, rowHeight, opt_domHelper) {
   goog.base(this, opt_domHelper);
-  this.setId(pageIndex);
+  this.setId('' + pageIndex);
   this.rowCount_ = rowCount;
 
-  goog.iter.forEach(goog.iter.range(rowCount), function () {
-    var row = new goog.ui.ThousandRows.Row(rowHeight);
+  var rowOffset = pageIndex * rowCount;
+  goog.iter.forEach(goog.iter.range(rowCount), function (i) {
+    var row = new goog.ui.ThousandRows.Row(rowOffset + i, rowHeight);
     this.addChild(row, true);
   }, this);
 };
@@ -176,7 +191,8 @@ goog.inherits(goog.ui.ThousandRows.Page, goog.ui.Component);
 
 /** @inheritDoc */
 goog.ui.ThousandRows.Page.prototype.createDom = function () {
-  var elm = this.getDomHelper().createDom('div', '--page--');
+  var elm = this.getDomHelper().createDom('div',
+      goog.getCssName(goog.ui.ThousandRows.baseCssName, 'page'));
   this.setElementInternal(elm);
 };
 
@@ -187,18 +203,50 @@ goog.ui.ThousandRows.Page.prototype.createDom = function () {
 
 /**
  * @constructor
+ * @param {string|number} rowIndex
  */
-goog.ui.ThousandRows.Row = function (height, opt_domHelper) {
+goog.ui.ThousandRows.Row = function (rowIndex, height, opt_domHelper) {
   goog.base(this, opt_domHelper);
+
+  this.setId('' + rowIndex);
+
+  /**
+   * @type {number}
+   */
   this.height_ = height;
 };
 goog.inherits(goog.ui.ThousandRows.Row, goog.ui.Component);
 
 
+/**
+ * @return {!goog.ui.ThousandRows}
+ */
+goog.ui.ThousandRows.Row.prototype.getDelegate_ = function () {
+  return this.getParnet().getParent();
+};
+
+
+/**
+ * @param {Object}
+ */
+goog.ui.ThousandRows.Row.prototype.renderRecord = function (record) {
+  if (this.isInDocument_()) {
+    this.record_ = record;
+    var elm = this.getElement();
+    // TODO: Render with record. I will create Renderer class.
+    goog.dom.classes.remove(elm, goog.getCssName(goog.ui.ThousandRows.baseCssName, 'row-notrendered'));
+  }
+};
+
+
 /** @inheritDoc */
 goog.ui.ThousandRows.Row.prototype.createDom = function () {
+  var className = goog.getCssName(goog.ui.ThousandRows.baseCssName, 'row');
+  if (!this.record_) className += ' ' + goog.getCssName(goog.ui.ThousandRows.baseCssName, 'row-notrendered');
   var elm = this.getDomHelper().createDom('div', {
+    className: className,
     style: 'height: ' + this.height_ + 'px'
-  }, 'aaa' + this.getParent().getId() + '----' + this.getId());
+  });
+  if (this.record_) this.renderRecord(this.record_);
   this.setElementInternal(elm);
 };
