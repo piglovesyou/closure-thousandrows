@@ -13,6 +13,10 @@
     goog.require('goog.iter');
     goog.require('goog.math.Range');
     goog.require('goog.Timer');
+
+    // test.
+    goog.require('goog.ds.DataManager');
+
   </script>
 
   <script src="../../../third_party/piglovesyou/goog/ui/scroller.js"></script>
@@ -23,20 +27,36 @@
   </script>
 
   <style type="text/css">
+    .goog-thousandrows-row {
+      height: 38px;
+      border-bottom: 1px #999 solid;
+      zoom: 1;
+      overflow: hidden;
+    }
+    .goog-thousandrows-row-notrendered {
+      background: #ccc;
+    }
+    .goog-thousandrows-page:last-child .goog-thousandrows-row:last-child {
+      border-bottom: none;
+    }
+
     #my-thousandrows {
       height: 200px;
       width: 400px;
       border: 1px #999 solid;
     }
-    .goog-thousandrows-row {
-      padding: 10px;
-      border-bottom: 1px #999 solid;
+    #my-thousandrows .row-col {
+      height: 38px;
+      line-height: 38px;
+      float: left;
+      border-right: 1px #999 solid;
+      padding-left: 10px;
+      padding-right: 10px;
     }
-    .goog-thousandrows-row-notrendered {
-      background: #ccc;
-    }
-    .goog-thousandrows-page:last-child .goog-thousandrows-row {
-      border-bottom: none;
+    #my-thousandrows .row-id {
+      width: 30px;
+      text-align: center;
+      padding: 0;
     }
   </style>
 
@@ -52,7 +72,7 @@
   </div>
 
   <script>
-    var thousandrows = new goog.ui.ThousandRows(38, 10, 100);
+    var thousandrows = new goog.ui.ThousandRows(39, 10, 100);
 
     var elm = goog.dom.getElement('my-thousandrows');
     thousandrows.decorate(elm);
