@@ -1,14 +1,15 @@
 # goog.ui.ThousandRows
-A Module for Google Closure Library to implement list, which has a lot of rows.
+A Module for Google Closure Library to implement a big list, which has a lot of rows. 
 
 
 ## Features
 Main features of this plugin are:
-- Light motion. ThousandRows stores data, but not elements of DOM in document.
+- Light motion. ThousandRows stores data, but not elements in the document.
+- Page lading is also light. ThousandRows always gets minimum data from a server.
 - You can jump whereever you want by means of virtually srolling implementation. 
 
-There are constraint such as:
-- Divs of rows have to be the same height. (for scrolling consistency)
+There are constraints such as:
+- Divs of rows have to be the same height (for scrolling consistency).
 
 
 ## Lisence
