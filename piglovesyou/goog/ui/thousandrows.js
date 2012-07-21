@@ -9,24 +9,16 @@ goog.require('goog.asserts');
 goog.require('goog.Uri');
 
 
-var dummyDataSource = new goog.ds.JsDataSource({}, 'dummy');
-goog.ds.DataManager.getInstance().addDataSource(dummyDataSource);
-
-for (var i=0;i<30;i++) {
-  dummyDataSource.setChildNode('row_' + i, { title: 'title'+i, body: 'body....' });
-}
-
 
 /**
  * @param {number} rowHeight
  * @param {number} rowCountInPage
  * @param {number} totalRowCount
- * @param {goog.ds.DataNode} dataSource
  * @param {goog.dom.DomHelper=} opt_domHelper
  * @constructor
  * @extends {goog.ui.VirtualScroller}
  */
-goog.ui.ThousandRows = function (rowHeight, rowCountInPage, totalRowCount, dataSource, opt_domHelper) {
+goog.ui.ThousandRows = function (model, rowHeight, rowCountInPage, totalRowCount, opt_domHelper) {
   goog.base(this, goog.ui.Scroller.ORIENTATION.VERTICAL, opt_domHelper);
 
   this.rowHeight_      = rowHeight;
@@ -34,23 +26,9 @@ goog.ui.ThousandRows = function (rowHeight, rowCountInPage, totalRowCount, dataS
   this.totalRowCount_  = totalRowCount;
   this.setVirtualScrollHeight(rowHeight * totalRowCount);
 
-  this.setModel(dataSource || dummyDataSource);
+  this.setModel(model);
 };
 goog.inherits(goog.ui.ThousandRows, goog.ui.VirtualScroller);
-
-
-/**
- * @type {string}
- */
-goog.ui.ThousandRows.prototype.rowDataNamePrefix_ = 'row_';
-
-
-/**
- * @param {string}
- */
-goog.ui.ThousandRows.prototype.setRowDataNamePrefix_ = function (prefix) {
-  this.rowDataNamePrefix_ = prefix;
-};
 
 
 /**
@@ -97,7 +75,7 @@ goog.ui.ThousandRows.prototype.adjustScrollTop = function (orient) {
 
 
 goog.ui.ThousandRows.prototype.renderPages_ = function () {
-  var range = this.getPageRange_();
+  var range = this.getExistingPageRange_();
   goog.array.forEach(this.getChildIds(), function (id) {
     if (!goog.math.Range.containsPoint(range, +id)) {
        this.removeChild(id, true);
@@ -135,7 +113,7 @@ goog.ui.ThousandRows.prototype.createPage_ = function (pageIndex) {
 /**
  * @return {goog.math.Range}
  */
-goog.ui.ThousandRows.prototype.getPageRange_ = function () {
+goog.ui.ThousandRows.prototype.getExistingPageRange_ = function () {
   var pageIndex = this.getPageIndex_();
   return new goog.math.Range(
       Math.max(0, pageIndex - 1),
@@ -203,12 +181,34 @@ goog.ui.ThousandRows.Page = function (pageIndex, rowCount, rowHeight, opt_domHel
   var dh = this.getDomHelper();
   var rowOffset = pageIndex * rowCount;
   goog.iter.forEach(goog.iter.range(rowCount), function (i) {
-    var row = new goog.ui.ThousandRows.Row(rowOffset + i, rowHeight, dh);
-    this.addChild(row, true);
+    this.addChild(new goog.ui.ThousandRows.Row(rowOffset + i, rowHeight, dh));
   }, this);
 };
 goog.inherits(goog.ui.ThousandRows.Page, goog.ui.Component);
 
+
+goog.ui.ThousandRows.Page.prototype.enterDocument = function () {
+	goog.base(this, 'enterDocument');
+	this.renderRows();
+};
+
+goog.ui.ThousandRows.Page.prototype.renderRows = function () {
+	// Render outer dom first.
+	this.forEachChild(function (row) {
+		row.render(this.getContentElement());
+	}, this);
+	this.getParent().getModel().getRecordAtPageIndex(+this.getId(), this.rowCount_, this.renderRows_, this);
+};
+
+goog.ui.ThousandRows.Page.prototype.renderRows_ = function (err, json) {
+	if (err ||
+			!goog.isArray(json) ||
+			this.getChildCount() != json.length
+			) return; // TODO: retry?
+	this.forEachChild(function (row, index) {
+		row.renderRecord(json[index]);
+	});
+};
 
 /** @inheritDoc */
 goog.ui.ThousandRows.Page.prototype.createDom = function () {
@@ -255,22 +255,24 @@ goog.ui.ThousandRows.Row.CssPostFixes = {
   NOT_RENDERED: 'notrendered'
 };
 
+goog.ui.ThousandRows.Row.prototype.enterDocument = function () {
+	goog.base(this, 'enterDocument');
+};
 
 /**
- * @param {Object}
+ * @param {Object} record
  */
-goog.ui.ThousandRows.Row.prototype.renderRecord_ = function () {
+goog.ui.ThousandRows.Row.prototype.renderRecord = function (record) {
   if (!this.isInDocument()) return;
 
   var elm = this.getElement();
-  var record = this.getRecord_();
   if (record) {
     var dh = this.getDomHelper();
     goog.dom.removeChildren(elm);
     dh.append(elm,
-        dh.createDom('div', 'row-col row-id', record.getDataName()),
-        dh.createDom('div', 'row-col row-title', record.getChildNodeValue('title')),
-        dh.createDom('div', 'row-col row-description', record.getChildNodeValue('body')));
+        dh.createDom('div', 'row-col row-index', '' + record['index']),
+        dh.createDom('div', 'row-col row-title', record['title']),
+        dh.createDom('div', 'row-col row-description', record['body']));
     goog.dom.classes.remove(elm,
         goog.getCssName(goog.ui.ThousandRows.Row.baseCssName,
           goog.ui.ThousandRows.Row.CssPostFixes.NOT_RENDERED));
@@ -280,13 +282,6 @@ goog.ui.ThousandRows.Row.prototype.renderRecord_ = function () {
   }
 };
 
-
-/** @inheritDoc */
-goog.ui.ThousandRows.Row.prototype.enterDocument = function () {
-  goog.base(this, 'enterDocument');
-  this.renderRecord_();
-};
-
 /** @inheritDoc */
 goog.ui.ThousandRows.Row.prototype.createDom = function () {
   var elm = this.getDomHelper().createDom('div', {
@@ -294,17 +289,6 @@ goog.ui.ThousandRows.Row.prototype.createDom = function () {
     // style: 'height: ' + this.height_ + 'px'
   });
   this.setElementInternal(elm);
-};
-
-goog.ui.ThousandRows.Row.prototype.getRecord_ = function () {
-  return this.getDelegate_() && this.getDelegate_().getRecordAtRowIndex(this.getId());
-};
-
-/**
- * @return {!goog.ui.ThousandRows}
- */
-goog.ui.ThousandRows.Row.prototype.getDelegate_ = function () {
-  return this.getParent() && this.getParent().getParent();
 };
 
 
@@ -334,28 +318,20 @@ goog.ui.ThousandRows.Model = function (uri, opt_xhrManager) {
 	 * @type {Object} key is request uri. The uri is request id in xhrManager.
 	 */
 	this.pages_ = {};
-
-	// var u = '/rows?offset=0&count=';
-	// for (var i=0;i<10;i++) this.xhr_.send(u+i, u+i);
-
-	this.uri_ = '/rows';
-	this.getRecordAtPageIndex(2, 4, function (err, json) {
-		console.log(json);
-	});
 };
 goog.inherits(goog.ui.ThousandRows.Model, goog.Disposable);
 
 goog.ui.ThousandRows.Model.prototype.getRecordAtPageIndex = function (index, rowCountInPage, callback, opt_obj) {
 	var uri = this.buildUri_(index, rowCountInPage);
 	if (this.pages_[uri]) {
-		callback.call(opt_obj, true, this.pages_[uri]);
+		callback.call(opt_obj, false, this.pages_[uri]);
 	} else {
 		this.sendPageRequest_(uri, goog.bind(function (e) {
 			var t = e.target;
 			var success = t.isSuccess()
 			var json = t.getResponseJson()
 			if (success) this.pages_[uri] = json;
-			callback.call(opt_obj, success, json);
+			callback.call(opt_obj, !success, json);
 		}, this));
 	}
 };
@@ -390,6 +366,4 @@ goog.ui.ThousandRows.Model.prototype.disposeInternal = function () {
 	this.pages_ = null;
 	goog.base(this, 'disposeInternal');
 };
-
-var m = new goog.ui.ThousandRows.Model();
 

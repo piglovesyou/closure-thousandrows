@@ -55,7 +55,7 @@
       padding-left: 10px;
       padding-right: 10px;
     }
-    #my-thousandrows .row-id {
+    #my-thousandrows .row-index {
       width: 30px;
       text-align: center;
       padding: 0;
@@ -74,7 +74,8 @@
   </div>
 
   <script>
-    var thousandrows = new goog.ui.ThousandRows(39, 10, 100);
+    var model = new goog.ui.ThousandRows.Model('/rows');
+    var thousandrows = new goog.ui.ThousandRows(model, 39, 10, 100);
 
     var elm = goog.dom.getElement('my-thousandrows');
     thousandrows.decorate(elm);
