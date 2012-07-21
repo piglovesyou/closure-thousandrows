@@ -6,6 +6,7 @@ goog.require('goog.iter');
 goog.require('goog.math.Range');
 goog.require('goog.Timer');
 goog.require('goog.asserts');
+goog.require('goog.Uri');
 
 
 var dummyDataSource = new goog.ds.JsDataSource({}, 'dummy');
@@ -34,8 +35,6 @@ goog.ui.ThousandRows = function (rowHeight, rowCountInPage, totalRowCount, dataS
   this.setVirtualScrollHeight(rowHeight * totalRowCount);
 
   this.setModel(dataSource || dummyDataSource);
-
-  goog.asserts.assert(this.getModel());
 };
 goog.inherits(goog.ui.ThousandRows, goog.ui.VirtualScroller);
 
@@ -307,3 +306,90 @@ goog.ui.ThousandRows.Row.prototype.getRecord_ = function () {
 goog.ui.ThousandRows.Row.prototype.getDelegate_ = function () {
   return this.getParent() && this.getParent().getParent();
 };
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @param {string} uri
+ * @param {goog.net.XhrManager} opt_xhrManager
+ * @constructor
+ * @extends {goog.Disposable}
+ */
+goog.ui.ThousandRows.Model = function (uri, opt_xhrManager) {
+	goog.base(this);
+
+	this.uri_ = uri;
+	this.xhr_ = opt_xhrManager || new goog.net.XhrManager;
+
+	/**
+	 * @type {Object} key is request uri. The uri is request id in xhrManager.
+	 */
+	this.pages_ = {};
+
+	// var u = '/rows?offset=0&count=';
+	// for (var i=0;i<10;i++) this.xhr_.send(u+i, u+i);
+
+	this.uri_ = '/rows';
+	this.getRecordAtPageIndex(2, 4, function (err, json) {
+		console.log(json);
+	});
+};
+goog.inherits(goog.ui.ThousandRows.Model, goog.Disposable);
+
+goog.ui.ThousandRows.Model.prototype.getRecordAtPageIndex = function (index, rowCountInPage, callback, opt_obj) {
+	var uri = this.buildUri_(index, rowCountInPage);
+	if (this.pages_[uri]) {
+		callback.call(opt_obj, true, this.pages_[uri]);
+	} else {
+		this.sendPageRequest_(uri, goog.bind(function (e) {
+			var t = e.target;
+			var success = t.isSuccess()
+			var json = t.getResponseJson()
+			if (success) this.pages_[uri] = json;
+			callback.call(opt_obj, success, json);
+		}, this));
+	}
+};
+
+goog.ui.ThousandRows.Model.prototype.sendPageRequest_ = function (uri, callback) {
+	if (this.xhr_.getOutstandingRequests()[uri]) return; // Xhr is in flight.
+	var u = undefined;
+	this.xhr_.send(
+			uri,
+			uri,
+      u, // opt_method,
+      u, // opt_content,
+      u, // opt_headers,
+      u, // opt_priority,
+      callback, // opt_callback,
+      u); // opt_maxRetries
+};
+
+
+goog.ui.ThousandRows.Model.prototype.buildUri_ = function (index, rowCountInPage) {
+	var uri = goog.Uri.parse(this.uri_);
+	uri.setParameterValue('count', rowCountInPage);
+	uri.setParameterValue('offset', index * rowCountInPage);
+	return uri.toString();
+};
+
+goog.ui.ThousandRows.Model.prototype.disposeInternal = function () {
+	if (this.xhr_) {
+		this.xhr_.dispose();
+		this.xhr_ = null;
+	}
+	this.pages_ = null;
+	goog.base(this, 'disposeInternal');
+};
+
+var m = new goog.ui.ThousandRows.Model();
+
