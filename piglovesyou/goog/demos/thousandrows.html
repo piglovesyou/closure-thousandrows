@@ -12,18 +12,15 @@
 
     goog.require('goog.iter');
     goog.require('goog.math.Range');
-    goog.require('goog.Timer');
-
-    goog.require('goog.net.XhrManager');
     goog.require('goog.Uri');
-
-    goog.require('goog.ds.DataManager');
-    goog.require('goog.ds.JsDataSource');
   </script>
 
   <script src="../../../third_party/piglovesyou/goog/ui/scroller.js"></script>
-  <script src="../ui/virtualscroller.js"></script>
-  <script src="../ui/thousandrows.js"></script>
+  <script src="../ui/thousandrows/virtualscroller.js"></script>
+  <script src="../ui/thousandrows/row.js"></script>
+  <script src="../ui/thousandrows/page.js"></script>
+  <script src="../ui/thousandrows/model.js"></script>
+  <script src="../ui/thousandrows/thousandrows.js"></script>
   <script type="text/javascript">
     goog.require('goog.ui.ThousandRows');
   </script>
@@ -36,14 +33,14 @@
       overflow: hidden;
     }
     .goog-thousandrows-row-notrendered {
-      background: #ccc;
+      background: #ececec;
     }
     .goog-thousandrows-page:last-child .goog-thousandrows-row:last-child {
       border-bottom: none;
     }
 
     #my-thousandrows {
-      height: 200px;
+      height: 300px;
       width: 400px;
       border: 1px #999 solid;
     }
@@ -74,9 +71,8 @@
   </div>
 
   <script>
-    var model = new goog.ui.ThousandRows.Model('/rows');
-    var thousandrows = new goog.ui.ThousandRows(model, 39, 10, 100);
-
+    var model = new goog.ui.thousandrows.Model('/rows');
+    var thousandrows = new goog.ui.ThousandRows(model, 39, 20, 10000);
     var elm = goog.dom.getElement('my-thousandrows');
     thousandrows.decorate(elm);
   </script>

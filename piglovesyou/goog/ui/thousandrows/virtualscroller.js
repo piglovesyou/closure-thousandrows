@@ -1,5 +1,5 @@
 
-goog.provide('goog.ui.VirtualScroller');
+goog.provide('goog.ui.thousandrows.VirtualScroller');
 
 goog.require('goog.ui.Scroller');
 
