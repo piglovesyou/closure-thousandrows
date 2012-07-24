@@ -1,5 +1,5 @@
 # goog.ui.ThousandRows
-A Module for Google Closure Library to implement a big list, which has a lot of rows. 
+A module for Google Closure Library to implement a big list, which has a lot of rows. 
 
 
 ## Demo
