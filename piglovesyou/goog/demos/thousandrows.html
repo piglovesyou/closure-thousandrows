@@ -18,12 +18,10 @@
   <script type="text/javascript">
     goog.require('goog.ui.Slider');
     goog.require('goog.ui.Control');
-
     goog.require('goog.iter');
     goog.require('goog.math.Range');
     goog.require('goog.Uri');
   </script>
-
   <script src="../../../third_party/piglovesyou/goog/ui/scroller.js"></script>
   <script src="../ui/thousandrows/virtualscroller.js"></script>
   <script src="../ui/thousandrows/row.js"></script>
@@ -77,6 +75,7 @@
     <div class="goog-scroller-container"></div>
   </div>
 
+  <!--script src="/tmp/min.js"></script-->
   <script>
     var model = new goog.ui.thousandrows.Model('/rows');
     var thousandrows = new goog.ui.ThousandRows(model, 39, 20, 10000);

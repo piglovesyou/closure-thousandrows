@@ -12,6 +12,7 @@ goog.provide('goog.ui.ThousandRows');
 goog.require('goog.ui.thousandrows.VirtualScroller');
 goog.require('goog.ui.thousandrows.Page');
 goog.require('goog.ui.thousandrows.Row');
+goog.require('goog.ui.thousandrows.Model');
 
 goog.require('goog.iter');
 goog.require('goog.math.Range');
