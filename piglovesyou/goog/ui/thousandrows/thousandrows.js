@@ -26,7 +26,7 @@ goog.require('goog.Uri');
  * @param {number} totalRowCount
  * @param {goog.dom.DomHelper=} opt_domHelper
  * @constructor
- * @extends {goog.ui.VirtualScroller}
+ * @extends {goog.ui.thousandrows.VirtualScroller}
  */
 goog.ui.ThousandRows = function (model, rowHeight, rowCountInPage, totalRowCount, opt_domHelper) {
   goog.base(this, goog.ui.Scroller.ORIENTATION.VERTICAL, opt_domHelper);
@@ -38,7 +38,7 @@ goog.ui.ThousandRows = function (model, rowHeight, rowCountInPage, totalRowCount
 
   this.setModel(model);
 };
-goog.inherits(goog.ui.ThousandRows, goog.ui.VirtualScroller);
+goog.inherits(goog.ui.ThousandRows, goog.ui.thousandrows.VirtualScroller);
 
 
 /**
@@ -73,7 +73,7 @@ goog.ui.ThousandRows.prototype.decorateInternal = function (element) {
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.enterDocument = function () {
   goog.base(this, 'enterDocument');
-  this.adjustScrollTop();
+  this.adjustScrollTop(goog.ui.Scroller.ORIENTATION.VERTICAL);
 };
 
 

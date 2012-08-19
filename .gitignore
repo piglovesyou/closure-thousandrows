@@ -2,4 +2,4 @@
 closure-library-read-only
 closure-library
 closure-compiler
-tmp/min.js
+compiled/min.js

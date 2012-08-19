@@ -15,7 +15,7 @@ goog.require('goog.Disposable');
 
 /**
  * @param {string} uri Uri. Also used as xhr request id.
- * @param {goog.net.XhrManager} opt_xhrManager
+ * @param {goog.net.XhrManager=} opt_xhrManager
  * @constructor
  * @extends {goog.Disposable}
  */
@@ -23,7 +23,7 @@ goog.ui.thousandrows.Model = function (uri, opt_xhrManager) {
 	goog.base(this);
 
 	this.uri_ = uri;
-	this.xhr_ = opt_xhrManager || new goog.net.XhrManager;
+	this.xhr_ = /** @type {goog.net.XhrManager} */(opt_xhrManager || new goog.net.XhrManager);
 
 	/**
 	 * @type {Object} key is request uri. The uri is request id in xhrManager.
@@ -60,7 +60,7 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, row
  * @param {Function} callback
  */
 goog.ui.thousandrows.Model.prototype.sendPageRequest_ = function (uri, callback) {
-	if (this.xhr_.getOutstandingRequests()[uri]) return; // Xhr is in flight.
+	if (goog.array.contains(this.xhr_.getOutstandingRequestIds(), uri)) return; // Xhr is in flight.
 	var u = undefined;
 	this.xhr_.send(
 			uri,
