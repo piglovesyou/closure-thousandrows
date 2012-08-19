@@ -46,7 +46,7 @@ goog.ui.thousandrows.Row.prototype.renderRecord = function (record) {
   if (record) {
     var dh = this.getDomHelper();
     goog.dom.removeChildren(elm);
-    dh.append(elm,
+    dh.append(/** @type {!Node} */(elm),
         dh.createDom('div', 'row-col row-index', '' + record['index']),
         dh.createDom('div', 'row-col row-title', record['title']),
         dh.createDom('div', 'row-col row-description', record['body']));
@@ -73,6 +73,9 @@ goog.ui.thousandrows.Row.prototype.createDom = function () {
   this.asNotRendered_();
 };
 
+/**
+ * @type {?string}
+ */
 goog.ui.thousandrows.Row.prototype.baseCssName;
 
 goog.ui.thousandrows.Row.prototype.getCssName = function () {

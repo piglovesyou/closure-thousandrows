@@ -14,7 +14,7 @@ goog.require('goog.ui.thousandrows.Row');
 
 
 /**
- * @param {string} pageIndex
+ * @param {string|number} pageIndex
  * @param {number} rowCount
  * @param {number} rowHeight
  * @param {goog.dom.DomHelper} opt_domHelper

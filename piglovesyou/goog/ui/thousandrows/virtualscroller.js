@@ -14,7 +14,8 @@ goog.require('goog.ui.Scroller');
 
 /**
  * @constructor
- * @param {?goog.ui.Scroller.ORIENTATION=} 
+ * @param {?goog.ui.Scroller.ORIENTATION=} opt_orient
+ * @param {goog.dom.DomHelper=} opt_domHelper
  * @extends {goog.ui.Scroller}
  */
 goog.ui.thousandrows.VirtualScroller = function (opt_orient, opt_domHelper) {
@@ -24,7 +25,7 @@ goog.inherits(goog.ui.thousandrows.VirtualScroller, goog.ui.Scroller);
 
 
 /**
- * @type {Number}
+ * @type {number}
  */
 goog.ui.thousandrows.VirtualScroller.prototype.virtualScrollHeight_ = -1;
 

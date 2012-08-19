@@ -21,6 +21,7 @@ goog.require('goog.Uri');
 
 
 /**
+ * @param {goog.ui.thousandrows.Model} model
  * @param {number} rowHeight
  * @param {number} rowCountInPage
  * @param {number} totalRowCount
@@ -36,19 +37,9 @@ goog.ui.ThousandRows = function (model, rowHeight, rowCountInPage, totalRowCount
   this.totalRowCount_  = totalRowCount;
   this.setVirtualScrollHeight(rowHeight * totalRowCount);
 
-  this.setModel(model);
+  this.setModel(/** @type {!goog.ui.thousandrows.Model} */model);
 };
 goog.inherits(goog.ui.ThousandRows, goog.ui.thousandrows.VirtualScroller);
-
-
-/**
- * Row needs this method.
- * @param {number} index
- * @return {Object} 
- */
-goog.ui.ThousandRows.prototype.getRecordAtRowIndex = function (index) {
-  return this.getModel().getChildNode(this.rowDataNamePrefix_ + index);
-};
 
 
 /**
@@ -65,7 +56,7 @@ goog.ui.ThousandRows.prototype.baseCssName = 'goog-' + goog.ui.ThousandRows.prot
 
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.decorateInternal = function (element) {
-  goog.dom.classes.add(element, goog.ui.ThousandRows.baseCssName);
+  goog.dom.classes.add(element, this.baseCssName);
   goog.base(this, 'decorateInternal', element);
 };
 
@@ -102,7 +93,7 @@ goog.ui.ThousandRows.prototype.renderPages_ = function () {
  * @return {goog.ui.thousandrows.Page}
  */
 goog.ui.ThousandRows.prototype.createPage_ = function (pageIndex) {
-  var page = this.getChild('' + pageIndex);
+  var page = /** @type {?goog.ui.thousandrows.Page} */(this.getChild('' + pageIndex));
   if (!page) {
     page = new goog.ui.thousandrows.Page(pageIndex,
         this.rowCountInPage_, this.rowHeight_, this.getDomHelper());
@@ -113,6 +104,7 @@ goog.ui.ThousandRows.prototype.createPage_ = function (pageIndex) {
         this.addChildAt(page, index, true);
         return true;
       }
+      return false;
     }, this));
     if (!inserted) this.addChild(page, true);
   }
