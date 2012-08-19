@@ -16,6 +16,18 @@ There are constraints such as:
 - Divs of rows have to be the same height (for scrolling consistency).
 
 
+## Tests
+### 1. Browser Test
+In progress..
+
+### 2. Code-Checking by Closure Compiler
+Run
+```bash
+$ make compile
+```
+Then you'll get warnings if any.
+
+
 ## Lisence
 ```
 Copyright (c) 2012 Soichi Takamura (http://stakam.net/)
