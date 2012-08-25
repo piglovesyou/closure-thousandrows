@@ -15,14 +15,21 @@ goog.require('goog.Disposable');
 
 /**
  * @param {string} uri Uri. Also used as xhr request id.
+ * @param {Object=} options
  * @param {goog.net.XhrManager=} opt_xhrManager
  * @constructor
  * @extends {goog.Disposable}
  */
-goog.ui.thousandrows.Model = function (uri, opt_xhrManager) {
+goog.ui.thousandrows.Model = function (uri, options, opt_xhrManager) {
 	goog.base(this);
 
 	this.uri_ = uri;
+  this.options = {
+    countParamKey:  /** @type {string} */(
+        goog.isObject(options) && options['countParamKey'] ? options['countParamKey'] : 'count'),
+    offsetParamKey: /** @type {string} */(
+        goog.isObject(options) && options['offsetParamKey'] ? options['offsetParamKey'] : 'offset')
+  };
 	this.xhr_ = /** @type {goog.net.XhrManager} */(opt_xhrManager || new goog.net.XhrManager);
 
 	/**
@@ -49,7 +56,7 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, row
 			var success = xhrio.isSuccess();
       var json = xhrio.getResponseJson();
 			if (success) this.pages_[uri] = json;
-			callback.call(opt_obj, !success, json);
+			callback.call(opt_obj, !success, this.pages_[uri]);
 		}, this));
 	}
 };
@@ -81,8 +88,8 @@ goog.ui.thousandrows.Model.prototype.sendPageRequest_ = function (uri, callback)
  */
 goog.ui.thousandrows.Model.prototype.buildUri_ = function (index, rowCountInPage) {
 	var uri = goog.Uri.parse(this.uri_);
-	uri.setParameterValue('count', rowCountInPage);
-	uri.setParameterValue('offset', index * rowCountInPage);
+	uri.setParameterValue(this.options.countParamKey, rowCountInPage);
+	uri.setParameterValue(this.options.offsetParamKey, index * rowCountInPage);
 	return uri.toString();
 };
 
