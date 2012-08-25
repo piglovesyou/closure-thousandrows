@@ -24,20 +24,19 @@ goog.require('goog.Uri');
  * @param {goog.ui.thousandrows.Model} model
  * @param {number} rowHeight
  * @param {number} rowCountInPage
- * @param {number} totalRowCount
  * @param {goog.dom.DomHelper=} opt_domHelper
  * @constructor
  * @extends {goog.ui.thousandrows.VirtualScroller}
  */
-goog.ui.ThousandRows = function (model, rowHeight, rowCountInPage, totalRowCount, opt_domHelper) {
+goog.ui.ThousandRows = function (model, rowHeight, rowCountInPage, opt_domHelper) {
   goog.base(this, goog.ui.Scroller.ORIENTATION.VERTICAL, opt_domHelper);
 
   this.rowHeight_      = rowHeight;
   this.rowCountInPage_ = rowCountInPage;
-  this.totalRowCount_  = totalRowCount;
-  this.setVirtualScrollHeight(rowHeight * totalRowCount);
 
   this.setModel(/** @type {!goog.ui.thousandrows.Model} */model);
+
+  this.updateTotal_();
 };
 goog.inherits(goog.ui.ThousandRows, goog.ui.thousandrows.VirtualScroller);
 
@@ -52,6 +51,11 @@ goog.ui.ThousandRows.prototype.baseName = 'thousandrows';
  * @type {string}
  */
 goog.ui.ThousandRows.prototype.baseCssName = 'goog-' + goog.ui.ThousandRows.prototype.baseName;
+
+
+goog.ui.ThousandRows.prototype.updateTotal_ = function () {
+  this.setVirtualScrollHeight(this.rowHeight_ * this.getModel().getTotal());
+};
 
 
 /** @inheritDoc */
@@ -155,6 +159,6 @@ goog.ui.ThousandRows.prototype.getPageHeight_ = function () {
  * @return {number}
  */
 goog.ui.ThousandRows.prototype.getMaxPageIndex_ = function () {
-  return Math.ceil(this.totalRowCount_ / this.rowCountInPage_) - 1;
+  return Math.ceil(this.getModel().getTotal() / this.rowCountInPage_) - 1;
 };
 

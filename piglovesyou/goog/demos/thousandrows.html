@@ -77,8 +77,8 @@
 
   <!--script src="/tmp/min.js"></script-->
   <script>
-    var model = new goog.ui.thousandrows.Model('/rows');
-    var thousandrows = new goog.ui.ThousandRows(model, 39, 20, 10000);
+    var model = new goog.ui.thousandrows.Model('/rows', 10000);
+    var thousandrows = new goog.ui.ThousandRows(model, 39, 20);
     var elm = goog.dom.getElement('my-thousandrows');
     thousandrows.decorate(elm);
   </script>

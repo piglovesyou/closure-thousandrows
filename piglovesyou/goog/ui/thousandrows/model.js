@@ -20,17 +20,14 @@ goog.require('goog.Disposable');
  * @constructor
  * @extends {goog.Disposable}
  */
-goog.ui.thousandrows.Model = function (uri, options, opt_xhrManager) {
+goog.ui.thousandrows.Model = function (uri, opt_totalRowCount, opt_xhrManager) {
+
 	goog.base(this);
 
 	this.uri_ = uri;
-  this.options = {
-    countParamKey:  /** @type {string} */(
-        goog.isObject(options) && options['countParamKey'] ? options['countParamKey'] : 'count'),
-    offsetParamKey: /** @type {string} */(
-        goog.isObject(options) && options['offsetParamKey'] ? options['offsetParamKey'] : 'offset')
-  };
+  this.totalRowCount_ = goog.isNumber(opt_totalRowCount) ? opt_totalRowCount : 0;
 	this.xhr_ = /** @type {goog.net.XhrManager} */(opt_xhrManager || new goog.net.XhrManager);
+
 
 	/**
 	 * @type {Object} key is request uri. The uri is request id in xhrManager.
@@ -38,6 +35,39 @@ goog.ui.thousandrows.Model = function (uri, options, opt_xhrManager) {
 	this.pages_ = {};
 };
 goog.inherits(goog.ui.thousandrows.Model, goog.Disposable);
+
+
+/**
+ * @type {string}
+ */
+goog.ui.thousandrows.Model.prototype.countParamKey_ = 'count';
+
+
+/**
+ * @type {string}
+ */
+goog.ui.thousandrows.Model.prototype.offsetParamKey_ = 'offset';
+
+
+goog.ui.thousandrows.Model.prototype.getTotal = function () {
+  return this.totalRowCount_;
+};
+
+
+/**
+ * @param {string} key
+ */
+goog.ui.thousandrows.Model.prototype.setCountParamKey = function (key) {
+  this.countParamKey_ = key;
+};
+
+
+/**
+ * @param {string} key
+ */
+goog.ui.thousandrows.Model.prototype.setOffsetParamKey = function (key) {
+  this.offsetParamKey_ = key;
+};
 
 
 /**
@@ -98,8 +128,8 @@ goog.ui.thousandrows.Model.prototype.sendPageRequest_ = function (uri, callback)
  */
 goog.ui.thousandrows.Model.prototype.buildUri_ = function (index, rowCountInPage) {
 	var uri = goog.Uri.parse(this.uri_);
-	uri.setParameterValue(this.options.countParamKey, rowCountInPage);
-	uri.setParameterValue(this.options.offsetParamKey, index * rowCountInPage);
+	uri.setParameterValue(this.countParamKey_, rowCountInPage);
+	uri.setParameterValue(this.offsetParamKey_, index * rowCountInPage);
 	return uri.toString();
 };
 
