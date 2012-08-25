@@ -55,10 +55,20 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, row
 			var xhrio = e.target;
 			var success = xhrio.isSuccess();
       var json = xhrio.getResponseJson();
-			if (success) this.pages_[uri] = json;
+			if (success) this.pages_[uri] = this.parseJsonForRowsData(json);
 			callback.call(opt_obj, !success, this.pages_[uri]);
 		}, this));
 	}
+};
+
+
+/**
+ * Override this method if your json is not row data array.
+ * @param {Object|Array} json
+ * @return {!Array}
+ */
+goog.ui.thousandrows.Model.prototype.parseJsonForRowsData = function (json) {
+  return json;
 };
 
 

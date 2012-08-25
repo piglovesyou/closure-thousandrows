@@ -48,13 +48,16 @@ goog.ui.thousandrows.Page.prototype.renderRows = function () {
 	this.getParent().getModel().getRecordAtPageIndex(+this.getId(), this.rowCount_, this.renderRows_, this);
 };
 
-goog.ui.thousandrows.Page.prototype.renderRows_ = function (err, json) {
-	if (err ||
-			!goog.isArray(json) ||
-			this.getChildCount() != json.length
-			) return; // TODO: retry?
+/**
+ * @param {boolean} err
+ * @param {!Array} rowsData
+ */
+goog.ui.thousandrows.Page.prototype.renderRows_ = function (err, rowsData) {
+	if (err || !goog.isArray(rowsData) || this.getChildCount() != rowsData.length) {
+    return;
+  }
 	this.forEachChild(function (row, index) {
-		row.renderRecord(json[index]);
+		row.renderRecord(rowsData[index]);
 	});
 };
 
