@@ -10,7 +10,7 @@
 goog.provide('goog.ui.thousandrows.Model');
 
 goog.require('goog.net.XhrManager');
-goog.require('goog.Disposable');
+goog.require('goog.events.EventTarget');
 
 
 /**
@@ -18,7 +18,7 @@ goog.require('goog.Disposable');
  * @param {Object=} options
  * @param {goog.net.XhrManager=} opt_xhrManager
  * @constructor
- * @extends {goog.Disposable}
+ * @extends {goog.events.EventTarget}
  */
 goog.ui.thousandrows.Model = function (uri, opt_totalRowCount, opt_xhrManager) {
 
@@ -34,7 +34,7 @@ goog.ui.thousandrows.Model = function (uri, opt_totalRowCount, opt_xhrManager) {
 	 */
 	this.pages_ = {};
 };
-goog.inherits(goog.ui.thousandrows.Model, goog.Disposable);
+goog.inherits(goog.ui.thousandrows.Model, goog.events.EventTarget);
 
 
 /**
