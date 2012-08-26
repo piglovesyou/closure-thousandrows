@@ -95,7 +95,7 @@ goog.ui.thousandrows.Model.EventType = {
  */
 goog.ui.thousandrows.Model.prototype.initDs_ = function (id, total) {
   this.dm_ = goog.ds.DataManager.getInstance();
-  this.ds_ = goog.ds.FastDataNode.fromJs({}, id);
+  this.ds_ = new goog.ds.FastDataNode({}, id);
 
   this.totalDs_ = new goog.ds.PrimitiveFastDataNode(total, 'total', this.ds_);
   this.ds_.add(this.totalDs_);
