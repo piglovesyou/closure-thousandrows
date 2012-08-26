@@ -39,7 +39,7 @@ goog.ui.thousandrows.Row.prototype.enterDocument = function () {
 /**
  * @param {Object} record
  */
-goog.ui.thousandrows.Row.prototype.renderRecord = function (record) {
+goog.ui.thousandrows.Row.prototype.renderContent = function (record) {
   if (!this.isInDocument()) return;
 
   var elm = this.getElement();

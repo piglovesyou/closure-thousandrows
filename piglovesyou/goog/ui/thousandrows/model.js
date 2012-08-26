@@ -9,6 +9,8 @@
 
 goog.provide('goog.ui.thousandrows.Model');
 
+goog.require('goog.ds.DataManager');
+goog.require('goog.ds.JsXmlHttpDataSource');
 goog.require('goog.net.XhrManager');
 goog.require('goog.events.EventTarget');
 
@@ -26,8 +28,8 @@ goog.ui.thousandrows.Model = function (uri, opt_totalRowCount, opt_xhrManager) {
 
 	this.uri_ = uri;
   this.totalRowCount_ = goog.isNumber(opt_totalRowCount) ? opt_totalRowCount : 0;
-	this.xhr_ = /** @type {goog.net.XhrManager} */(opt_xhrManager || new goog.net.XhrManager);
 
+	this.xhr_ = /** @type {goog.net.XhrManager} */(opt_xhrManager || new goog.net.XhrManager);
 
 	/**
 	 * @type {Object} key is request uri. The uri is request id in xhrManager.
@@ -35,6 +37,13 @@ goog.ui.thousandrows.Model = function (uri, opt_totalRowCount, opt_xhrManager) {
 	this.pages_ = {};
 };
 goog.inherits(goog.ui.thousandrows.Model, goog.events.EventTarget);
+
+
+goog.ui.thousandrows.Model.prototype.dm_;
+
+goog.ui.thousandrows.Model.prototype.ds_;
+
+goog.ui.thousandrows.Model.prototype.dataSourceInitialized_ = false;
 
 
 /**
@@ -49,24 +58,52 @@ goog.ui.thousandrows.Model.prototype.countParamKey_ = 'count';
 goog.ui.thousandrows.Model.prototype.offsetParamKey_ = 'offset';
 
 
+/**
+ * @param {string} key
+ */
+goog.ui.thousandrows.Model.prototype.setParamKeys = function (count, offset) {
+  this.countParamKey_ = count;
+  this.offsetParamKey_ = offset;
+};
+
+
 goog.ui.thousandrows.Model.prototype.getTotal = function () {
   return this.totalRowCount_;
 };
 
 
 /**
- * @param {string} key
+ * @enum {string}
  */
-goog.ui.thousandrows.Model.prototype.setCountParamKey = function (key) {
-  this.countParamKey_ = key;
+goog.ui.thousandrows.Model.EventType = {
+  UPDATE_TOTAL: 'updatetotal',
+  UPDATE_PAGE: 'updatepage'
+};
+
+/**
+ * @param {string} id As a name of dataSource.
+ */
+goog.ui.thousandrows.Model.prototype.initDs = function (id) {
+  if (!this.dataSourceInitialized_) {
+    this.dataSourceInitialized_ = true;
+
+    this.dm_ = goog.ds.DataManager.getInstance();
+    this.ds_ = new goog.ds.FastDataNode([], id);
+    this.dm_.addDataSource(this.ds_);
+    this.dm_.addListener(goog.bind(this.handleDataChange_, this), '$' + id + '/...');
+  }
 };
 
 
-/**
- * @param {string} key
- */
-goog.ui.thousandrows.Model.prototype.setOffsetParamKey = function (key) {
-  this.offsetParamKey_ = key;
+goog.ui.thousandrows.Model.prototype.handleDataChange_ = function (path) {
+  var i = +path[path.length-1];
+  var ds = goog.ds.Expr.create(path).getValue();
+  if (ds) {
+    this.dispatchEvent({
+      type: goog.ui.thousandrows.Model.EventType.UPDATE_PAGE,
+      ds: ds
+    });
+  }
 };
 
 
@@ -78,17 +115,32 @@ goog.ui.thousandrows.Model.prototype.setOffsetParamKey = function (key) {
  */
 goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, rowCountInPage, callback, opt_obj) {
 	var uri = this.buildUri_(index, rowCountInPage);
-	if (this.pages_[uri]) {
-		callback.call(opt_obj, false, this.pages_[uri]);
-	} else {
-		this.sendPageRequest_(uri, goog.bind(function (e) {
-			var xhrio = e.target;
-			var success = xhrio.isSuccess();
+  var pageName = 'page' + index;
+
+  var storedDs = goog.ds.Expr.create(this.ds_.getDataName() + '/' + pageName).getValue();
+  if (storedDs) {
+    this.dispatchEvent({
+      type: goog.ui.thousandrows.Model.EventType.UPDATE_PAGE,
+      ds: storedDs
+    });
+  } else {
+    this.sendPageRequest_(uri, goog.bind(function (e) {
+      var xhrio = e.target;
+      var success = xhrio.isSuccess();
       var json = xhrio.getResponseJson();
-			if (success) this.pages_[uri] = this.parseJsonForRowsData(json);
-			callback.call(opt_obj, !success, this.pages_[uri]);
-		}, this));
-	}
+      if (success) {
+
+        var rowsData = this.parseJsonForRowsData(json);
+
+        var ds = goog.ds.FastDataNode.fromJs({
+          index: index,
+          rowsData: rowsData
+        }, pageName, this.ds_);
+        this.ds_.add(ds);
+
+      }
+    }, this));
+  }
 };
 
 
@@ -143,4 +195,3 @@ goog.ui.thousandrows.Model.prototype.disposeInternal = function () {
 	this.pages_ = null;
 	goog.base(this, 'disposeInternal');
 };
-

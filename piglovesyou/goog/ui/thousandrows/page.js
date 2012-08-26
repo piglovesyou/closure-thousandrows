@@ -34,37 +34,24 @@ goog.ui.thousandrows.Page = function (pageIndex, rowCount, rowHeight, opt_domHel
 };
 goog.inherits(goog.ui.thousandrows.Page, goog.ui.Component);
 
-
-goog.ui.thousandrows.Page.prototype.enterDocument = function () {
-	goog.base(this, 'enterDocument');
-	this.renderRows();
-};
-
-goog.ui.thousandrows.Page.prototype.renderRows = function () {
-	// Render outer dom first.
-	this.forEachChild(function (row) {
-		row.render(this.getContentElement());
-	}, this);
-	this.getParent().getModel().getRecordAtPageIndex(+this.getId(), this.rowCount_, this.renderRows_, this);
-};
-
-/**
- * @param {boolean} err
- * @param {!Array} rowsData
- */
-goog.ui.thousandrows.Page.prototype.renderRows_ = function (err, rowsData) {
-	if (err || !goog.isArray(rowsData) || this.getChildCount() != rowsData.length) {
-    return;
-  }
-	this.forEachChild(function (row, index) {
-		row.renderRecord(rowsData[index]);
-	});
-};
-
 /** @inheritDoc */
 goog.ui.thousandrows.Page.prototype.createDom = function () {
   var elm = this.getDomHelper().createDom('div', this.getCssName());
   this.setElementInternal(elm);
+
+	this.forEachChild(function (row) {
+		row.render(this.getContentElement());
+	}, this);
+};
+
+/**
+ * @param {Array} rowsData
+ */
+goog.ui.thousandrows.Page.prototype.renderRowsContent = function (rowsData) {
+	if (!goog.isArray(rowsData) || this.getChildCount() != rowsData.length) return;
+	this.forEachChild(function (row, index) {
+		row.renderContent(rowsData[index]);
+	});
 };
 
 goog.ui.thousandrows.Page.prototype.getCssName = function () {

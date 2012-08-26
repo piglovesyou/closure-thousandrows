@@ -35,7 +35,8 @@ goog.ui.ThousandRows = function (model, rowHeight, rowCountInPage, opt_domHelper
   this.rowCountInPage_ = rowCountInPage;
 
   this.setModel(/** @type {!goog.ui.thousandrows.Model} */model);
-
+  
+  model.initDs(this.baseName + this.getId());
   this.updateTotal_();
 };
 goog.inherits(goog.ui.ThousandRows, goog.ui.thousandrows.VirtualScroller);
@@ -58,6 +59,20 @@ goog.ui.ThousandRows.prototype.updateTotal_ = function () {
 };
 
 
+goog.ui.ThousandRows.prototype.handleUpdateTotal_ = function (e) {
+  this.updateTotal_();
+};
+
+
+goog.ui.ThousandRows.prototype.handleUpdatePage_ = function (e) {
+  var ds = e.ds;
+  var page = this.getChild('' + ds.index);
+  if (page && page.isInDocument()) {
+    page.renderRowsContent(ds.rowsData);
+  }
+};
+
+
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.decorateInternal = function (element) {
   goog.dom.classes.add(element, this.baseCssName);
@@ -68,6 +83,10 @@ goog.ui.ThousandRows.prototype.decorateInternal = function (element) {
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.enterDocument = function () {
   goog.base(this, 'enterDocument');
+  var model = this.getModel();
+  this.getHandler()
+    .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_TOTAL, this.handleUpdateTotal_)
+    .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_PAGE, this.handleUpdatePage_)
   this.adjustScrollTop(goog.ui.Scroller.ORIENTATION.VERTICAL);
 };
 
@@ -112,6 +131,7 @@ goog.ui.ThousandRows.prototype.createPage_ = function (pageIndex) {
     }, this));
     if (!inserted) this.addChild(page, true);
   }
+  this.getModel().getRecordAtPageIndex(pageIndex, this.rowCountInPage_);
   return page;
 };
 
