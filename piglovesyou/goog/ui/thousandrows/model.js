@@ -22,7 +22,7 @@ goog.require('goog.events.EventTarget');
  * @constructor
  * @extends {goog.events.EventTarget}
  */
-goog.ui.thousandrows.Model = function (uri, opt_totalRowCount, opt_xhrManager) {
+goog.ui.thousandrows.Model = function (id, uri, opt_totalRowCount, opt_xhrManager) {
 
 	goog.base(this);
 
@@ -35,15 +35,22 @@ goog.ui.thousandrows.Model = function (uri, opt_totalRowCount, opt_xhrManager) {
 	 * @type {Object} key is request uri. The uri is request id in xhrManager.
 	 */
 	this.pages_ = {};
+
+  this.initDs_(id);
 };
 goog.inherits(goog.ui.thousandrows.Model, goog.events.EventTarget);
 
 
+/**
+ * @type {?goog.ds.DataManager}
+ */
 goog.ui.thousandrows.Model.prototype.dm_;
 
-goog.ui.thousandrows.Model.prototype.ds_;
 
-goog.ui.thousandrows.Model.prototype.dataSourceInitialized_ = false;
+/**
+ * @type {?goog.ds.FastDataNode}
+ */
+goog.ui.thousandrows.Model.prototype.ds_;
 
 
 /**
@@ -83,18 +90,17 @@ goog.ui.thousandrows.Model.EventType = {
 /**
  * @param {string} id As a name of dataSource.
  */
-goog.ui.thousandrows.Model.prototype.initDs = function (id) {
-  if (!this.dataSourceInitialized_) {
-    this.dataSourceInitialized_ = true;
-
-    this.dm_ = goog.ds.DataManager.getInstance();
-    this.ds_ = new goog.ds.FastDataNode([], id);
-    this.dm_.addDataSource(this.ds_);
-    this.dm_.addListener(goog.bind(this.handleDataChange_, this), '$' + id + '/...');
-  }
+goog.ui.thousandrows.Model.prototype.initDs_ = function (id) {
+  this.dm_ = goog.ds.DataManager.getInstance();
+  this.ds_ = new goog.ds.FastDataNode([], id);
+  this.dm_.addDataSource(this.ds_);
+  this.dm_.addListener(goog.bind(this.handleDataChange_, this), '$' + id + '/...');
 };
 
 
+/**
+ * @param {string} path
+ */
 goog.ui.thousandrows.Model.prototype.handleDataChange_ = function (path) {
   var i = +path[path.length-1];
   var ds = goog.ds.Expr.create(path).getValue();

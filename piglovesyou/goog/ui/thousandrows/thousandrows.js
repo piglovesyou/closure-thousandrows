@@ -21,23 +21,17 @@ goog.require('goog.Uri');
 
 
 /**
- * @param {goog.ui.thousandrows.Model} model
  * @param {number} rowHeight
  * @param {number} rowCountInPage
  * @param {goog.dom.DomHelper=} opt_domHelper
  * @constructor
  * @extends {goog.ui.thousandrows.VirtualScroller}
  */
-goog.ui.ThousandRows = function (model, rowHeight, rowCountInPage, opt_domHelper) {
+goog.ui.ThousandRows = function (rowHeight, rowCountInPage, opt_domHelper) {
   goog.base(this, goog.ui.Scroller.ORIENTATION.VERTICAL, opt_domHelper);
 
   this.rowHeight_      = rowHeight;
   this.rowCountInPage_ = rowCountInPage;
-
-  this.setModel(/** @type {!goog.ui.thousandrows.Model} */model);
-  
-  model.initDs(this.baseName + this.getId());
-  this.updateTotal_();
 };
 goog.inherits(goog.ui.ThousandRows, goog.ui.thousandrows.VirtualScroller);
 
@@ -52,6 +46,22 @@ goog.ui.ThousandRows.prototype.baseName = 'thousandrows';
  * @type {string}
  */
 goog.ui.ThousandRows.prototype.baseCssName = 'goog-' + goog.ui.ThousandRows.prototype.baseName;
+
+
+/** @inheritDoc */
+goog.ui.ThousandRows.prototype.setModel = function (model) {
+  goog.base(this, 'setModel', model);
+  this.updateTotal_();
+};
+
+
+goog.ui.ThousandRows.prototype.canDecorate = function (element) {
+  if (!(this.getModel() instanceof goog.ui.thousandrows.Model)) {
+    goog.asserts.fail('Set model before decorate');
+    return false;
+  }
+  return goog.base(this, 'canDecorate', element);
+};
 
 
 goog.ui.ThousandRows.prototype.updateTotal_ = function () {
