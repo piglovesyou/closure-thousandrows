@@ -35,7 +35,6 @@ goog.ui.thousandrows.VirtualScroller.prototype.virtualScrollHeight_ = -1;
  */
 goog.ui.thousandrows.VirtualScroller.prototype.setVirtualScrollHeight = function (scrollHeight) {
   this.virtualScrollHeight_ = scrollHeight;
-  return this;
 };
 
 

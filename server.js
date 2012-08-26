@@ -34,12 +34,19 @@ function getMimeType (p) {
 }
 function isNum (v) { return typeof v == 'number' }
 function toHashDigest (str) { return crypto.createHmac('sha1', 'so tired').update(str.toString()).digest('hex'); };
+
+function createRandomTotal () {
+  return 10000 - (Math.floor(Math.random() * 10) - 5);
+}
 function createDummyRecords (q) {
   var offset = isNum(+q.offset) ? +q.offset : 0;
   var count =  isNum(+q.count)  ? +q.count : 10;
-  var docs = [];
-  for (var i=offset;i<offset+count;i++) docs.push(createDummyRecord(i));
-  return docs;
+  var rows = [];
+  for (var i=offset;i<offset+count;i++) rows.push(createDummyRecord(i));
+  return {
+    total: createRandomTotal(),
+    rows: rows
+  };
 }
 function createDummyRecord (index) {
   return {

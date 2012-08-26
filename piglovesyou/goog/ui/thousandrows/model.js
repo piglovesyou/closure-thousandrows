@@ -18,17 +18,18 @@ goog.require('goog.events.EventTarget');
 /**
  * @param {string} id For root dataSource.
  * @param {string} uri Uri. Also used as xhr request id.
- * @param {number} opt_totalRowCount
+ * @param {number=} opt_totalRowCount
+ * @param {boolean=} opt_updateTotalWithJson
  * @param {goog.net.XhrManager=} opt_xhrManager
  * @constructor
  * @extends {goog.events.EventTarget}
  */
-goog.ui.thousandrows.Model = function (id, uri, opt_totalRowCount, opt_xhrManager) {
+goog.ui.thousandrows.Model = function (id, uri, opt_totalRowCount, opt_updateTotalWithJson, opt_xhrManager) {
 
 	goog.base(this);
 
 	this.uri_ = uri;
-  this.totalRowCount_ = goog.isNumber(opt_totalRowCount) ? opt_totalRowCount : 0;
+  this.updateTotalWithJson_ = !!opt_updateTotalWithJson;
 
 	this.xhr_ = /** @type {goog.net.XhrManager} */(opt_xhrManager || new goog.net.XhrManager);
 
@@ -37,7 +38,7 @@ goog.ui.thousandrows.Model = function (id, uri, opt_totalRowCount, opt_xhrManage
 	 */
 	this.pages_ = {};
 
-  this.initDs_(id);
+  this.initDs_(id, goog.isNumber(opt_totalRowCount) ? opt_totalRowCount : 0);
 };
 goog.inherits(goog.ui.thousandrows.Model, goog.events.EventTarget);
 
@@ -77,7 +78,7 @@ goog.ui.thousandrows.Model.prototype.setParamKeys = function (count, offset) {
 
 
 goog.ui.thousandrows.Model.prototype.getTotal = function () {
-  return this.totalRowCount_;
+  return this.totalDs_.get();
 };
 
 
@@ -92,9 +93,13 @@ goog.ui.thousandrows.Model.EventType = {
 /**
  * @param {string} id As a name of dataSource.
  */
-goog.ui.thousandrows.Model.prototype.initDs_ = function (id) {
+goog.ui.thousandrows.Model.prototype.initDs_ = function (id, total) {
   this.dm_ = goog.ds.DataManager.getInstance();
-  this.ds_ = new goog.ds.FastDataNode([], id);
+  this.ds_ = goog.ds.FastDataNode.fromJs({}, id);
+
+  this.totalDs_ = new goog.ds.PrimitiveFastDataNode(total, 'total', this.ds_);
+  this.ds_.add(this.totalDs_);
+
   this.dm_.addDataSource(this.ds_);
   this.dm_.addListener(goog.bind(this.handleDataChange_, this), '$' + id + '/...');
 };
@@ -105,12 +110,17 @@ goog.ui.thousandrows.Model.prototype.initDs_ = function (id) {
  */
 goog.ui.thousandrows.Model.prototype.handleDataChange_ = function (path) {
   var i = +path[path.length-1];
-  var ds = goog.ds.Expr.create(path).getValue();
+  var ds = goog.ds.Expr.create(path).getNode()
   if (ds) {
-    this.dispatchEvent({
-      type: goog.ui.thousandrows.Model.EventType.UPDATE_PAGE,
-      ds: ds
-    });
+    if (ds.getDataName() == 'total') {
+      this.dispatchEvent(goog.ui.thousandrows.Model.EventType.UPDATE_TOTAL);
+    } else {
+      // TODO: Just dispatch with page index.
+      this.dispatchEvent({
+        type: goog.ui.thousandrows.Model.EventType.UPDATE_PAGE,
+        ds: ds
+      });
+    }
   }
 };
 
@@ -125,6 +135,7 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, row
 
   var storedDs = goog.ds.Expr.create(this.ds_.getDataName() + '/' + pageName).getValue();
   if (storedDs) {
+    // TODO: Just return rowsData.
     this.dispatchEvent({
       type: goog.ui.thousandrows.Model.EventType.UPDATE_PAGE,
       ds: storedDs
@@ -136,7 +147,14 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, row
       var json = xhrio.getResponseJson();
       if (success) {
 
-        var rowsData = this.parseJsonForRowsData(json);
+        var rowsData = this.extractRowsDataFromJson(json);
+        if (this.updateTotalWithJson_) {
+          var total = this.extractTotalFromJson(json);
+          // Update only if these are not the same.
+          if (total != this.totalDs_.get()) {
+            this.totalDs_.set(total);
+          }
+        }
 
         var ds = goog.ds.FastDataNode.fromJs({
           index: index,
@@ -150,13 +168,18 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, row
 };
 
 
+goog.ui.thousandrows.Model.prototype.extractTotalFromJson = function (json) {
+  return json['total'];
+};
+
+
 /**
  * Override this method if your json is not row data array.
  * @param {Object|Array} json
  * @return {!Array}
  */
-goog.ui.thousandrows.Model.prototype.parseJsonForRowsData = function (json) {
-  return /** @type {!Array} */json;
+goog.ui.thousandrows.Model.prototype.extractRowsDataFromJson = function (json) {
+  return /** @type {!Array} */json['rows'];
 };
 
 

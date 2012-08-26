@@ -32,6 +32,7 @@ goog.ui.ThousandRows = function (rowHeight, rowCountInPage, opt_domHelper) {
 
   this.rowHeight_      = rowHeight;
   this.rowCountInPage_ = rowCountInPage;
+
 };
 goog.inherits(goog.ui.ThousandRows, goog.ui.thousandrows.VirtualScroller);
 
@@ -73,13 +74,19 @@ goog.ui.ThousandRows.prototype.canDecorate = function (element) {
 };
 
 
+/**
+ * Call this before `decorate' or `update'.
+ */
 goog.ui.ThousandRows.prototype.updateTotal_ = function () {
   this.setVirtualScrollHeight(this.rowHeight_ * this.getModel().getTotal());
+  // We cannot update() here in case its before decorate.
 };
 
 
 goog.ui.ThousandRows.prototype.handleUpdateTotal_ = function (e) {
   this.updateTotal_();
+  // TODO: Scroll daragger flicks. Fix it.
+  this.update();
 };
 
 
