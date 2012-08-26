@@ -82,7 +82,8 @@
   <!--script src="/tmp/min.js"></script-->
   <script>
     var thousandrows = new goog.ui.ThousandRows(39, 20);
-    var model = new goog.ui.thousandrows.Model(thousandrows.getId(), '/rows', 10000);
+    var modelId = thousandrows.baseName + thousandrows.getId();
+    var model = new goog.ui.thousandrows.Model(modelId, '/rows', 10000);
 
     thousandrows.setModel(model);
     thousandrows.decorate(goog.dom.getElement('my-thousandrows'));

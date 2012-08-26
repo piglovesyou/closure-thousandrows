@@ -16,8 +16,9 @@ goog.require('goog.events.EventTarget');
 
 
 /**
+ * @param {string} id For root dataSource.
  * @param {string} uri Uri. Also used as xhr request id.
- * @param {Object=} options
+ * @param {number} opt_totalRowCount
  * @param {goog.net.XhrManager=} opt_xhrManager
  * @constructor
  * @extends {goog.events.EventTarget}
@@ -66,7 +67,8 @@ goog.ui.thousandrows.Model.prototype.offsetParamKey_ = 'offset';
 
 
 /**
- * @param {string} key
+ * @param {string} count
+ * @param {string} offset
  */
 goog.ui.thousandrows.Model.prototype.setParamKeys = function (count, offset) {
   this.countParamKey_ = count;
@@ -116,10 +118,8 @@ goog.ui.thousandrows.Model.prototype.handleDataChange_ = function (path) {
 /**
  * @param {number} index
  * @param {number} rowCountInPage
- * @param {Function} callback
- * @param {Object=} opt_obj
  */
-goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, rowCountInPage, callback, opt_obj) {
+goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, rowCountInPage) {
 	var uri = this.buildUri_(index, rowCountInPage);
   var pageName = 'page' + index;
 
@@ -156,7 +156,7 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, row
  * @return {!Array}
  */
 goog.ui.thousandrows.Model.prototype.parseJsonForRowsData = function (json) {
-  return json;
+  return /** @type {!Array} */json;
 };
 
 

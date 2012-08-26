@@ -55,6 +55,15 @@ goog.ui.ThousandRows.prototype.setModel = function (model) {
 };
 
 
+/**
+ * @return {?goog.ui.thousandrows.Model}
+ * @override
+ */
+goog.ui.ThousandRows.prototype.getModel = function () {
+  return /** @type {?goog.ui.thousandrows.Model} */(goog.base(this, 'getModel'));
+};
+
+
 goog.ui.ThousandRows.prototype.canDecorate = function (element) {
   if (!(this.getModel() instanceof goog.ui.thousandrows.Model)) {
     goog.asserts.fail('Set model before decorate');
@@ -96,7 +105,7 @@ goog.ui.ThousandRows.prototype.enterDocument = function () {
   var model = this.getModel();
   this.getHandler()
     .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_TOTAL, this.handleUpdateTotal_)
-    .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_PAGE, this.handleUpdatePage_)
+    .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_PAGE, this.handleUpdatePage_);
   this.adjustScrollTop(goog.ui.Scroller.ORIENTATION.VERTICAL);
 };
 
