@@ -83,9 +83,24 @@ goog.ui.ThousandRows.prototype.updateTotal_ = function () {
 };
 
 
+goog.ui.ThousandRows.prototype.updateTimer_ = new goog.Timer(200);
+
 goog.ui.ThousandRows.prototype.handleUpdateTotal_ = function (e) {
   this.updateTotal_();
   // TODO: Scroll daragger flicks. Fix it.
+
+  var timer = this.updateTimer_;
+  if (!timer.enabled) {
+    timer.start();
+  } else {
+    timer.stop();
+    timer.start();
+  }
+};
+
+
+goog.ui.ThousandRows.prototype.handleUpdateTimerTick_ = function (e) {
+  this.updateTimer_.stop();
   this.update();
 };
 
@@ -112,7 +127,8 @@ goog.ui.ThousandRows.prototype.enterDocument = function () {
   var model = this.getModel();
   this.getHandler()
     .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_TOTAL, this.handleUpdateTotal_)
-    .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_PAGE, this.handleUpdatePage_);
+    .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_PAGE, this.handleUpdatePage_)
+    .listen(this.updateTimer_, goog.Timer.TICK, this.handleUpdateTimerTick_);
   this.adjustScrollTop(goog.ui.Scroller.ORIENTATION.VERTICAL);
 };
 
