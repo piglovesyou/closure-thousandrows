@@ -29,10 +29,14 @@ goog.ui.thousandrows.Page = function (pageIndex, rowCount, rowHeight, opt_domHel
   var dh = this.getDomHelper();
   var rowOffset = pageIndex * rowCount;
   goog.iter.forEach(goog.iter.range(rowCount), function (i) {
-    this.addChild(new goog.ui.thousandrows.Row(rowOffset + i, rowHeight, dh));
+    this.addChild(this.createRow_(rowOffset + i, rowHeight));
   }, this);
 };
 goog.inherits(goog.ui.thousandrows.Page, goog.ui.Component);
+
+goog.ui.thousandrows.Page.prototype.createRow_ = function (id, rowHeight) {
+  return new goog.ui.thousandrows.Row(id, rowHeight, null, this.getDomHelper());
+};
 
 /** @inheritDoc */
 goog.ui.thousandrows.Page.prototype.createDom = function () {

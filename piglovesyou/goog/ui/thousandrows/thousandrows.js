@@ -148,7 +148,7 @@ goog.ui.ThousandRows.prototype.renderPages_ = function () {
     }
   }, this);
   goog.iter.forEach(goog.iter.range(range.start, range.end + 1), function (i) {
-    this.createPage_(i);
+    this.createPage(i);
   }, this);
 };
 
@@ -157,11 +157,10 @@ goog.ui.ThousandRows.prototype.renderPages_ = function () {
  * @param {number} pageIndex
  * @return {goog.ui.thousandrows.Page}
  */
-goog.ui.ThousandRows.prototype.createPage_ = function (pageIndex) {
+goog.ui.ThousandRows.prototype.createPage = function (pageIndex) {
   var page = /** @type {?goog.ui.thousandrows.Page} */(this.getChild('' + pageIndex));
   if (!page) {
-    page = new goog.ui.thousandrows.Page(pageIndex,
-        this.rowCountInPage_, this.rowHeight_, this.getDomHelper());
+    page = this.createPage_(pageIndex);
 
     // insert right position in DOM.
     var inserted = !!(goog.array.find(this.getChildIds(), function (id, index) {
@@ -175,6 +174,16 @@ goog.ui.ThousandRows.prototype.createPage_ = function (pageIndex) {
   }
   this.getModel().getRecordAtPageIndex(pageIndex, this.rowCountInPage_);
   return page;
+};
+
+
+/**
+ * @return {goog.ui.thousandrows.Page}
+ * @protected
+ */
+goog.ui.ThousandRows.prototype.createPage_ = function (pageIndex) {
+  return new goog.ui.thousandrows.Page(pageIndex,
+        this.rowCountInPage_, this.rowHeight_, this.getDomHelper());
 };
 
 

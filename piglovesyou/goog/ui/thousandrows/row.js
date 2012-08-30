@@ -9,6 +9,7 @@
 
 goog.provide('goog.ui.thousandrows.Row');
 
+goog.require('goog.ui.thousandrows.RowRenderer');
 goog.require('goog.ui.Component');
 goog.require('goog.dom.classes');
 
@@ -19,7 +20,7 @@ goog.require('goog.dom.classes');
  * @constructor
  * @extends {goog.ui.Component}
  */
-goog.ui.thousandrows.Row = function (rowIndex, height, opt_domHelper) {
+goog.ui.thousandrows.Row = function (rowIndex, height, opt_renderer, opt_domHelper) {
   goog.base(this, opt_domHelper);
 
   this.setId('' + rowIndex);
@@ -28,6 +29,8 @@ goog.ui.thousandrows.Row = function (rowIndex, height, opt_domHelper) {
    * @type {number}
    */
   this.height_ = height;
+
+  this.renderer_ = opt_renderer || goog.ui.thousandrows.RowRenderer.getInstance();
 };
 goog.inherits(goog.ui.thousandrows.Row, goog.ui.Component);
 
@@ -46,10 +49,7 @@ goog.ui.thousandrows.Row.prototype.renderContent = function (record) {
   if (record) {
     var dh = this.getDomHelper();
     goog.dom.removeChildren(elm);
-    dh.append(/** @type {!Node} */(elm),
-        dh.createDom('div', 'row-col row-index', '' + record['index']),
-        dh.createDom('div', 'row-col row-title', record['title']),
-        dh.createDom('div', 'row-col row-description', record['body']));
+    dh.append(/** @type {!Node} */(elm), this.renderer_.createContent(this, record));
     goog.dom.classes.remove(elm,
         goog.getCssName(this.getCssName(), 'notrendered'));
   } else {
@@ -65,10 +65,7 @@ goog.ui.thousandrows.Row.prototype.asNotRendered_ = function () {
 
 /** @inheritDoc */
 goog.ui.thousandrows.Row.prototype.createDom = function () {
-  var elm = this.getDomHelper().createDom('div', {
-    className: this.getCssName()
-    // style: 'height: ' + this.height_ + 'px'
-  });
+  var elm = this.renderer_.createDom(this);
   this.setElementInternal(elm);
   this.asNotRendered_();
 };
