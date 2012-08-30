@@ -12,6 +12,9 @@ require('http').createServer(function (req, res) {
   if (fs.existsSync(p)) {
     res.writeHead(200, {'Content-Type': getMimeType(p)});
     res.end(fs.readFileSync(p));
+  } else if (req.headers.accept.indexOf('text/html') >= 0) {
+    res.writeHead(302, { 'Location': '/piglovesyou/goog/demos/thousandrows.html' });
+    res.end();
   } else if (p == 'rows') {
     var records =  createDummyRecords(querystring.parse(u.query));
     res.writeHead(200, {'Content-Type': 'application/json'});
@@ -34,7 +37,6 @@ function getMimeType (p) {
 }
 function isNum (v) { return typeof v == 'number' }
 function toHashDigest (str) { return crypto.createHmac('sha1', 'so tired').update(str.toString()).digest('hex'); };
-
 function createRandomTotal () {
   return 10000 - (Math.floor(Math.random() * 10) - 5);
 }
