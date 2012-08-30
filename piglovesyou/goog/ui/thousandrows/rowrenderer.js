@@ -9,7 +9,7 @@ goog.addSingletonGetter(goog.ui.thousandrows.RowRenderer);
 
 
 /**
- * @param {goog.ui.thousandrows.Row}
+ * @param {goog.ui.thousandrows.Row} row
  * @return {Element}
  */
 goog.ui.thousandrows.RowRenderer.prototype.createDom = function (row) {
@@ -21,7 +21,8 @@ goog.ui.thousandrows.RowRenderer.prototype.createDom = function (row) {
 
 
 /**
- * @param {goog.ui.thousandrows.Row}
+ * @param {goog.ui.thousandrows.Row} row
+ * @param {Object} record
  * @return {Element}
  */
 goog.ui.thousandrows.RowRenderer.prototype.createContent = function (row, record) {
