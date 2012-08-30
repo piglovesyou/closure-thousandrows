@@ -171,8 +171,8 @@ goog.ui.ThousandRows.prototype.createPage = function (pageIndex) {
       return false;
     }, this));
     if (!inserted) this.addChild(page, true);
+    this.getModel().getRecordAtPageIndex(pageIndex, this.rowCountInPage_);
   }
-  this.getModel().getRecordAtPageIndex(pageIndex, this.rowCountInPage_);
   return page;
 };
 
