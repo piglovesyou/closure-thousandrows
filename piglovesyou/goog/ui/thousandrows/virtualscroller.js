@@ -43,6 +43,13 @@ goog.ui.thousandrows.VirtualScroller.prototype.getVirtualScrollTop = function ()
 };
 
 
+/** 
+ * We never use this in virtualScroller.
+ * @override
+ */
+goog.ui.thousandrows.VirtualScroller.prototype.adjustValueByScroll_ = goog.nullFunction;
+
+
 /**
  * Provide virtual scroll height, not actual one.
  * @inheritDoc
