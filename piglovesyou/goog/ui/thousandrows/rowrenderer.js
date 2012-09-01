@@ -23,7 +23,7 @@ goog.ui.thousandrows.RowRenderer.prototype.createDom = function (row) {
 /**
  * @param {goog.ui.thousandrows.Row} row
  * @param {Object} record
- * @return {Element}
+ * @return {DocumentFragment}
  */
 goog.ui.thousandrows.RowRenderer.prototype.createContent = function (row, record) {
   goog.asserts.assert(record['index'] || record['title'] || record['body'], 'Use custom row renderer.');
