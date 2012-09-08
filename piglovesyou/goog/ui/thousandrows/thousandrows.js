@@ -65,15 +65,6 @@ goog.ui.ThousandRows.prototype.getModel = function () {
 };
 
 
-goog.ui.ThousandRows.prototype.canDecorate = function (element) {
-  if (!(this.getModel() instanceof goog.ui.thousandrows.Model)) {
-    goog.asserts.fail('Set model before decorate');
-    return false;
-  }
-  return goog.base(this, 'canDecorate', element);
-};
-
-
 /**
  * Call this before `decorate' or `update'.
  */
@@ -115,9 +106,31 @@ goog.ui.ThousandRows.prototype.handleUpdatePage_ = function (e) {
 
 
 /** @inheritDoc */
+goog.ui.ThousandRows.prototype.createDom = function () {
+  if (!(this.getModel() instanceof goog.ui.thousandrows.Model)) {
+    goog.asserts.fail('Set model before decorate');
+    return false;
+  }
+  goog.base(this, 'createDom');
+  goog.dom.classes.add(this.getElement(), this.baseCssName);
+  console.log(this.getElement());
+};
+
+
+/** @inheritDoc */
 goog.ui.ThousandRows.prototype.decorateInternal = function (element) {
-  goog.dom.classes.add(element, this.baseCssName);
   goog.base(this, 'decorateInternal', element);
+  goog.dom.classes.add(element, this.baseCssName);
+};
+
+
+/** @inheritDoc */
+goog.ui.ThousandRows.prototype.canDecorate = function (element) {
+  if (!(this.getModel() instanceof goog.ui.thousandrows.Model)) {
+    goog.asserts.fail('Set model before decorate');
+    return false;
+  }
+  return goog.base(this, 'canDecorate', element);
 };
 
 
