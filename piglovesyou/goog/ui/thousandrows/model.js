@@ -150,7 +150,6 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, row
       ds: storedDs
     });
   } else {
-    console.log(goog.getUid(this))
     this.sendPageRequest_(uri, goog.bind(function (e) {
       var xhrio = e.target;
       var success = xhrio.isSuccess();
