@@ -88,14 +88,14 @@
     thousandrows.decorate(goog.dom.getElement('my-thousandrows'));
     thousandrows.setModel(model);
 
-    setInterval(function () {
-      console.log(goog.ds.DataManager.getInstance().get());
-    }, 1200);
+    // setInterval(function () {
+    //   console.log(goog.ds.DataManager.getInstance().get());
+    // }, 1200);
 
-    setTimeout(function () {
-      thousandrows.getModel().dispose();
-      thousandrows.setModel(new goog.ui.thousandrows.Model('/rows', 10000, true));
-    }, 4000);
+    // setTimeout(function () {
+    //   thousandrows.getModel().dispose();
+    //   thousandrows.setModel(new goog.ui.thousandrows.Model('/rows', 10000, true));
+    // }, 4000);
   </script>
 
 </body>
