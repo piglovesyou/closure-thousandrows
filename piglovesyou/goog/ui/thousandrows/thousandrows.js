@@ -113,7 +113,6 @@ goog.ui.ThousandRows.prototype.createDom = function () {
   }
   goog.base(this, 'createDom');
   goog.dom.classes.add(this.getElement(), this.baseCssName);
-  console.log(this.getElement());
 };
 
 
