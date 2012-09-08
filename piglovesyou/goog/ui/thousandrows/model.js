@@ -16,7 +16,6 @@ goog.require('goog.events.EventTarget');
 
 
 /**
- * @param {string} id For root dataSource.
  * @param {string} uri Uri. Also used as xhr request id.
  * @param {number=} opt_totalRowCount
  * @param {boolean=} opt_updateTotalWithJson
@@ -24,7 +23,7 @@ goog.require('goog.events.EventTarget');
  * @constructor
  * @extends {goog.events.EventTarget}
  */
-goog.ui.thousandrows.Model = function (id, uri, opt_totalRowCount, opt_updateTotalWithJson, opt_xhrManager) {
+goog.ui.thousandrows.Model = function (uri, opt_totalRowCount, opt_updateTotalWithJson, opt_xhrManager) {
 
 	goog.base(this);
 
@@ -33,12 +32,7 @@ goog.ui.thousandrows.Model = function (id, uri, opt_totalRowCount, opt_updateTot
 
 	this.xhr_ = /** @type {goog.net.XhrManager} */(opt_xhrManager || new goog.net.XhrManager);
 
-	/**
-	 * @type {Object} key is request uri. The uri is request id in xhrManager.
-	 */
-	this.pages_ = {};
-
-  this.initDs_(id, goog.isNumber(opt_totalRowCount) ? opt_totalRowCount : 0);
+  this.initDataSource_(goog.isNumber(opt_totalRowCount) ? opt_totalRowCount : 0);
 };
 goog.inherits(goog.ui.thousandrows.Model, goog.events.EventTarget);
 
@@ -90,18 +84,33 @@ goog.ui.thousandrows.Model.EventType = {
   UPDATE_PAGE: 'updatepage'
 };
 
+
+/**
+ * @type {string}
+ */
+goog.ui.thousandrows.Model.prototype.id_;
+
+
+/**
+ * @return {string}
+ */
+goog.ui.thousandrows.Model.prototype.getId = function () {
+  return this.id_ || (this.id_ = 'thousandrowsmodel:' + goog.getUid(this));
+};
+
+
 /**
  * @param {string} id As a name of dataSource.
  */
-goog.ui.thousandrows.Model.prototype.initDs_ = function (id, total) {
+goog.ui.thousandrows.Model.prototype.initDataSource_ = function (total) {
   this.dm_ = goog.ds.DataManager.getInstance();
-  this.ds_ = new goog.ds.FastDataNode({}, id);
+  this.ds_ = new goog.ds.FastDataNode({}, this.getId());
 
   this.totalDs_ = new goog.ds.PrimitiveFastDataNode(total, 'total', this.ds_);
   this.ds_.add(this.totalDs_);
 
   this.dm_.addDataSource(this.ds_);
-  this.dm_.addListener(goog.bind(this.handleDataChange_, this), '$' + id + '/...');
+  this.dm_.addListener(goog.bind(this.handleDataChange_, this), '$' + this.getId() + '/...');
 };
 
 
@@ -141,6 +150,7 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, row
       ds: storedDs
     });
   } else {
+    console.log(goog.getUid(this))
     this.sendPageRequest_(uri, goog.bind(function (e) {
       var xhrio = e.target;
       var success = xhrio.isSuccess();
@@ -221,6 +231,8 @@ goog.ui.thousandrows.Model.prototype.disposeInternal = function () {
 		this.xhr_.dispose();
 		this.xhr_ = null;
 	}
-	this.pages_ = null;
+  this.dm_.get().removeNode('$' + this.getId());
+  this.dm_ = null;
+  this.ds_ = null;
 	goog.base(this, 'disposeInternal');
 };

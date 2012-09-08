@@ -83,12 +83,19 @@
   <!--script src="/tmp/min.js"></script-->
   <script>
     var thousandrows = new goog.ui.ThousandRows(39, 20);
-    var modelId = thousandrows.baseName + thousandrows.getId();
-    var model = new goog.ui.thousandrows.Model(modelId, '/rows', 10000, true);
+    var model = new goog.ui.thousandrows.Model('/rows', 10000, true);
 
-    thousandrows.setModel(model);
     thousandrows.decorate(goog.dom.getElement('my-thousandrows'));
+    thousandrows.setModel(model);
 
+    setInterval(function () {
+      console.log(goog.ds.DataManager.getInstance().get());
+    }, 1200);
+
+    setTimeout(function () {
+      thousandrows.getModel().dispose();
+      thousandrows.setModel(new goog.ui.thousandrows.Model('/rows', 10000, true));
+    }, 4000);
   </script>
 
 </body>

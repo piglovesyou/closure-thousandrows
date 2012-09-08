@@ -51,8 +51,15 @@ goog.ui.ThousandRows.prototype.baseCssName = 'goog-' + goog.ui.ThousandRows.prot
 
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.setModel = function (model) {
+  var old = this.getModel();
+  if (old && this.hasModel()) {
+    goog.events.removeAll(old);
+    // We dont old.dispose() here. Here we don't have to.
+  }
   goog.base(this, 'setModel', model);
-  this.updateTotal_();
+  if (this.isInDocument()) {
+    this.observeModel_()
+  }
 };
 
 
@@ -107,10 +114,6 @@ goog.ui.ThousandRows.prototype.handleUpdatePage_ = function (e) {
 
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.createDom = function () {
-  if (!(this.getModel() instanceof goog.ui.thousandrows.Model)) {
-    goog.asserts.fail('Set model before decorate');
-    return false;
-  }
   goog.base(this, 'createDom');
   goog.dom.classes.add(this.getElement(), this.baseCssName);
 };
@@ -125,10 +128,6 @@ goog.ui.ThousandRows.prototype.decorateInternal = function (element) {
 
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.canDecorate = function (element) {
-  if (!(this.getModel() instanceof goog.ui.thousandrows.Model)) {
-    goog.asserts.fail('Set model before decorate');
-    return false;
-  }
   return goog.base(this, 'canDecorate', element);
 };
 
@@ -136,12 +135,28 @@ goog.ui.ThousandRows.prototype.canDecorate = function (element) {
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.enterDocument = function () {
   goog.base(this, 'enterDocument');
+  this.getHandler().listen(this.updateTimer_, goog.Timer.TICK, this.handleUpdateTimerTick_);
+  if (this.hasModel()) {
+    this.observeModel_();
+  }
+};
+
+
+goog.ui.ThousandRows.prototype.observeModel_ = function () {
   var model = this.getModel();
   this.getHandler()
     .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_TOTAL, this.handleUpdateTotal_)
-    .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_PAGE, this.handleUpdatePage_)
-    .listen(this.updateTimer_, goog.Timer.TICK, this.handleUpdateTimerTick_);
+    .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_PAGE, this.handleUpdatePage_);
+  this.updateTotal_();
   this.adjustScrollTop(goog.ui.Scroller.ORIENTATION.VERTICAL);
+};
+
+
+/**
+ * @return {boolean}
+ */
+goog.ui.ThousandRows.prototype.hasModel = function () {
+  return this.getModel() instanceof goog.ui.thousandrows.Model;
 };
 
 
