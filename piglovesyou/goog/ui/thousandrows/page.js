@@ -40,11 +40,13 @@ goog.ui.thousandrows.Page.prototype.createRow_ = function (id, rowHeight) {
 
 /** @inheritDoc */
 goog.ui.thousandrows.Page.prototype.createDom = function () {
+  var dh = this.getDomHelper();
   var elm = this.getDomHelper().createDom('div', this.getCssName());
   this.setElementInternal(elm);
 
 	this.forEachChild(function (row) {
-		row.render(this.getContentElement());
+		row.createDom();
+    dh.appendChild(this.getContentElement(), row.getElement());
 	}, this);
 };
 

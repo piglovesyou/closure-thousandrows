@@ -44,30 +44,30 @@ goog.ui.thousandrows.Row.prototype.enterDocument = function () {
  */
 goog.ui.thousandrows.Row.prototype.renderContent = function (record) {
   if (!this.isInDocument()) return;
-
-  var elm = this.getElement();
+  var content = this.getContentElement();
+  goog.dom.removeChildren(content);
   if (record) {
-    var dh = this.getDomHelper();
-    goog.dom.removeChildren(elm);
-    dh.append(/** @type {!Node} */(elm), this.renderer_.createContent(this, record));
-    goog.dom.classes.remove(elm,
-        goog.getCssName(this.getCssName(), 'notrendered'));
+    this.getDomHelper().appendChild(/** @type {!Node} */(content),
+        this.renderer_.createContent(this, record));
+    this.asRendered_(true);
   } else {
-    this.asNotRendered_();
+    this.asRendered_(false);
   }
 };
 
-goog.ui.thousandrows.Row.prototype.asNotRendered_ = function () {
-  var elm = this.getElement();
-  this.getDomHelper().removeChildren(elm);
-  goog.dom.classes.add(elm, goog.getCssName(this.getCssName(), 'notrendered'));
+/**
+ * @param {boolean} rendered Whether the content rendered or not.
+ */
+goog.ui.thousandrows.Row.prototype.asRendered_ = function (rendered) {
+  goog.dom.classes.enable(this.getElement(),
+      goog.getCssName(this.getCssName(), 'notrendered'), !rendered);
 };
 
 /** @inheritDoc */
 goog.ui.thousandrows.Row.prototype.createDom = function () {
   var elm = this.renderer_.createDom(this);
   this.setElementInternal(elm);
-  this.asNotRendered_();
+  this.asRendered_(false);
 };
 
 /**
