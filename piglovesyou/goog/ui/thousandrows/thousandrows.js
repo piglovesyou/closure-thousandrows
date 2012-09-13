@@ -171,7 +171,9 @@ goog.ui.ThousandRows.prototype.renderPages_ = function () {
   var range = this.getExistingPageRange_();
   goog.array.forEach(this.getChildIds(), function (id) {
     if (!goog.math.Range.containsPoint(range, +id)) {
-       this.removeChild(id, true);
+      var page = this.getChild(id);
+      this.removeChild(page, true);
+      page.dispose();
     }
   }, this);
   goog.iter.forEach(goog.iter.range(range.start, range.end + 1), function (i) {
