@@ -100,7 +100,8 @@ goog.ui.thousandrows.Model.prototype.getId = function () {
 
 
 /**
- * @param {string} id As a name of dataSource.
+ * @param {number} total Supposed total of rows length. This value
+ *                can be lazily initialized and can be updated after.
  */
 goog.ui.thousandrows.Model.prototype.initDataSource_ = function (total) {
   this.dm_ = goog.ds.DataManager.getInstance();
