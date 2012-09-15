@@ -223,7 +223,7 @@ goog.ui.ThousandRows.prototype.getExistingPageRange_ = function () {
   var pageIndex = this.getPageIndex_();
   return new goog.math.Range(
       Math.max(0, pageIndex - 1),
-      Math.min(this.getMaxPageIndex_(), pageIndex + 1));
+      goog.math.clamp(this.getMaxPageIndex_(), 0, pageIndex + 1));
 };
 
 
