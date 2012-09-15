@@ -56,11 +56,24 @@ goog.ui.thousandrows.Row.prototype.renderContent = function (record) {
 };
 
 /**
+ * @type {boolean}
+ */
+goog.ui.thousandrows.Row.prototype.hasContent_ = false;
+
+/**
+ * @return {boolean}
+ */
+goog.ui.thousandrows.Row.prototype.hasContent = function () {
+  return !!this.hasContent_;
+};
+
+/**
  * @param {boolean} rendered Whether the content rendered or not.
  */
 goog.ui.thousandrows.Row.prototype.asRendered_ = function (rendered) {
   goog.dom.classes.enable(this.getElement(),
       goog.getCssName(this.getCssName(), 'notrendered'), !rendered);
+  this.hasContent_ = !!rendered;
 };
 
 /** @inheritDoc */
