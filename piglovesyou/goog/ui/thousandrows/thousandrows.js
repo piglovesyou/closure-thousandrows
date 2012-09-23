@@ -54,7 +54,8 @@ goog.ui.ThousandRows.prototype.setModel = function (model) {
   var old = this.getModel();
   if (old && this.hasModel()) {
     goog.events.removeAll(old);
-    // We dont old.dispose() here. Here we don't have to.
+    this.thousandRows_.removeChildren(true);
+    // We dont old.dispose() here because it can be used again.
   }
   goog.base(this, 'setModel', model);
   if (this.isInDocument()) {
