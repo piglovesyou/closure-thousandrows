@@ -54,10 +54,15 @@ goog.ui.thousandrows.Page.prototype.createDom = function () {
  * @param {Array} rowsData
  */
 goog.ui.thousandrows.Page.prototype.renderRowsContent = function (rowsData) {
-	if (!goog.isArray(rowsData) || this.getChildCount() != rowsData.length) return;
+  goog.asserts.assert(goog.isArray(rowsData) || rowsData.length <= this.getChildCount(), 'Passed records are something wrong.');
 	this.forEachChild(function (row, index) {
-		row.renderContent(rowsData[index]);
-	});
+    var record = rowsData[index];
+    if (record) {
+      row.renderContent(record);
+    } else {
+      this.removeChild(row).dispose();
+    }
+	}, this);
 };
 
 goog.ui.thousandrows.Page.prototype.getCssName = function () {
