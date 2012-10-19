@@ -38,6 +38,15 @@ goog.inherits(goog.ui.ThousandRows, goog.ui.thousandrows.VirtualScroller);
 
 
 /**
+ * @enum {string}
+ */
+goog.ui.ThousandRows.EventType = {
+  UPDATE_PAGE: 'updatepage',
+  UPDATE_TOTAL: 'updatetotal'
+};
+
+
+/**
  * @type {string}
  */
 goog.ui.ThousandRows.prototype.baseName = 'thousandrows';
@@ -101,6 +110,10 @@ goog.ui.ThousandRows.prototype.handleUpdateTotal_ = function (e) {
     timer.stop();
     timer.start();
   }
+  this.dispatchEvent({
+    type: goog.ui.ThousandRows.EventType.UPDATE_TOTAL,
+    total: this.getModel().getTotal()
+  });
 };
 
 
@@ -116,6 +129,7 @@ goog.ui.ThousandRows.prototype.handleUpdatePage_ = function (e) {
   if (page && page.isInDocument()) {
     page.renderRowsContent(ds.rowsData);
   }
+  this.dispatchEvent(goog.ui.ThousandRows.EventType.UPDATE_PAGE);
 };
 
 
