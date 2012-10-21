@@ -58,6 +58,25 @@ goog.ui.ThousandRows.prototype.baseName = 'thousandrows';
 goog.ui.ThousandRows.prototype.baseCssName = 'goog-' + goog.ui.ThousandRows.prototype.baseName;
 
 
+/**
+ * When we re-set model and data structure gets different,
+ *   we may want to change this.rowHeight_.
+ * @param {number} height
+ */
+goog.ui.ThousandRows.prototype.setRowHeight = function (height) {
+  this.rowHeight_ = height;
+};
+
+
+/**
+ * Also, we may want to change this.rowCountInPage_.
+ * @param {number} count
+ */
+goog.ui.ThousandRows.prototype.setRowCountInPane = function (count) {
+  this.rowCountInPage_ = count;
+};
+
+
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.setModel = function (model) {
   var old = this.getModel();
