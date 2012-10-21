@@ -228,6 +228,9 @@ goog.ui.thousandrows.Model.prototype.buildUri_ = function (index, rowCountInPage
 /** @inheritDoc */
 goog.ui.thousandrows.Model.prototype.disposeInternal = function () {
 	if (this.xhr_) {
+    goog.array.forEach(this.xhr_.getOutstandingRequestIds(), function (id) {
+      this.abort(id, true);
+    }, this.xhr_);
 		this.xhr_.dispose();
 		this.xhr_ = null;
 	}
