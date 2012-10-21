@@ -25,12 +25,12 @@ goog.require('goog.events.EventTarget');
  */
 goog.ui.thousandrows.Model = function (uri, opt_totalRowCount, opt_updateTotalWithJson, opt_xhrManager) {
 
-	goog.base(this);
+  goog.base(this);
 
-	this.uri_ = uri;
+  this.uri_ = uri;
   this.updateTotalWithJson_ = !!opt_updateTotalWithJson;
 
-	this.xhr_ = /** @type {goog.net.XhrManager} */(opt_xhrManager || new goog.net.XhrManager);
+  this.xhr_ = /** @type {goog.net.XhrManager} */(opt_xhrManager || new goog.net.XhrManager);
 
   this.initDataSource_(goog.isNumber(opt_totalRowCount) ? opt_totalRowCount : 0);
 };
@@ -140,7 +140,7 @@ goog.ui.thousandrows.Model.prototype.handleDataChange_ = function (path) {
  * @param {number} rowCountInPage
  */
 goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, rowCountInPage) {
-	var uri = this.buildUri_(index, rowCountInPage);
+  var uri = this.buildUri_(index, rowCountInPage);
   var pageName = 'page' + index;
 
   var storedDs = goog.ds.Expr.create(this.ds_.getDataName() + '/' + pageName).getValue();
@@ -198,11 +198,11 @@ goog.ui.thousandrows.Model.prototype.extractRowsDataFromJson = function (json) {
  * @param {Function} callback
  */
 goog.ui.thousandrows.Model.prototype.sendPageRequest_ = function (uri, callback) {
-	if (goog.array.contains(this.xhr_.getOutstandingRequestIds(), uri)) return; // Xhr is in flight.
-	var u = undefined;
-	this.xhr_.send(
-			uri,
-			uri,
+  if (goog.array.contains(this.xhr_.getOutstandingRequestIds(), uri)) return; // Xhr is in flight.
+  var u = undefined;
+  this.xhr_.send(
+      uri,
+      uri,
       u, // opt_method,
       u, // opt_content,
       u, // opt_headers,
@@ -218,24 +218,24 @@ goog.ui.thousandrows.Model.prototype.sendPageRequest_ = function (uri, callback)
  * @return {string}
  */
 goog.ui.thousandrows.Model.prototype.buildUri_ = function (index, rowCountInPage) {
-	var uri = goog.Uri.parse(this.uri_);
-	uri.setParameterValue(this.countParamKey_, rowCountInPage);
-	uri.setParameterValue(this.offsetParamKey_, index * rowCountInPage);
-	return uri.toString();
+  var uri = goog.Uri.parse(this.uri_);
+  uri.setParameterValue(this.countParamKey_, rowCountInPage);
+  uri.setParameterValue(this.offsetParamKey_, index * rowCountInPage);
+  return uri.toString();
 };
 
 
 /** @inheritDoc */
 goog.ui.thousandrows.Model.prototype.disposeInternal = function () {
-	if (this.xhr_) {
+  if (this.xhr_) {
     goog.array.forEach(this.xhr_.getOutstandingRequestIds(), function (id) {
       this.abort(id, true);
     }, this.xhr_);
-		this.xhr_.dispose();
-		this.xhr_ = null;
-	}
+    this.xhr_.dispose();
+    this.xhr_ = null;
+  }
   this.dm_.get().removeNode('$' + this.getId());
   this.dm_ = null;
   this.ds_ = null;
-	goog.base(this, 'disposeInternal');
+  goog.base(this, 'disposeInternal');
 };
