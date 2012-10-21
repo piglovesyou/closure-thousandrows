@@ -23,12 +23,14 @@ goog.require('goog.Uri');
 /**
  * @param {number} rowHeight
  * @param {number} rowCountInPage
+ * @param {?goog.ui.Scroller.ORIENTATION=} opt_orient Only VERTICAL or BOTH are available.
  * @param {goog.dom.DomHelper=} opt_domHelper
  * @constructor
  * @extends {goog.ui.thousandrows.VirtualScroller}
  */
-goog.ui.ThousandRows = function (rowHeight, rowCountInPage, opt_domHelper) {
-  goog.base(this, goog.ui.Scroller.ORIENTATION.VERTICAL, opt_domHelper);
+goog.ui.ThousandRows = function (rowHeight, rowCountInPage, opt_orient, opt_domHelper) {
+  goog.asserts.assert(opt_orient != goog.ui.Scroller.ORIENTATION.HORIZONTAL, 'Only VERTICAL or BOTH are available.');
+  goog.base(this, opt_orient || goog.ui.Scroller.ORIENTATION.VERTICAL, opt_domHelper);
 
   this.rowHeight_      = rowHeight;
   this.rowCountInPage_ = rowCountInPage;
@@ -202,8 +204,12 @@ goog.ui.ThousandRows.prototype.hasModel = function () {
 
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.adjustScrollTop = function (orient) {
-  this.renderPages_();
-  this.getContentElement().scrollTop = this.getMargin_();
+  if (orient & goog.ui.Scroller.ORIENTATION.VERTICAL) {
+    this.renderPages_();
+    this.getContentElement().scrollTop = this.getMargin_();
+  } else {
+    goog.base(this, 'adjustScrollTop', orient);
+  }
 };
 
 
