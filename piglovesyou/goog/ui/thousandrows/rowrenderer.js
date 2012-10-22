@@ -25,7 +25,7 @@ goog.ui.thousandrows.RowRenderer.prototype.createDom = function (row) {
  * @param {Object} record
  * @return {Node}
  */
-goog.ui.thousandrows.RowRenderer.prototype.createContent = function (row, record) {
+goog.ui.thousandrows.RowRenderer.prototype.renderContent = function (row, record) {
   goog.asserts.assert(record['index'] || record['title'] || record['body'], 'Use custom row renderer.');
   var dh = row.getDomHelper();
   var fragment = dh.getDocument().createDocumentFragment();

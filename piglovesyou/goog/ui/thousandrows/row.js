@@ -50,12 +50,19 @@ goog.ui.thousandrows.Row.prototype.renderContent = function (record) {
   var content = this.getContentElement();
   goog.dom.removeChildren(content);
   if (record) {
-    this.getDomHelper().appendChild(/** @type {!Node} */(content),
-        this.renderer_.createContent(this, record));
+    this.renderContent_(record);
     this.asRendered_(true);
   } else {
     this.asRendered_(false);
   }
+};
+
+/**
+ * @param {Object} record
+ */
+goog.ui.thousandrows.Row.prototype.renderContent_ = function (record) {
+  this.getDomHelper().appendChild(/** @type {!Node} */(this.getContentElement()),
+      this.renderer_.renderContent(this, record));
 };
 
 /**
