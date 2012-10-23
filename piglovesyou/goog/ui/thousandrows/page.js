@@ -34,6 +34,20 @@ goog.ui.thousandrows.Page = function (pageIndex, rowCount, rowHeight, opt_domHel
 };
 goog.inherits(goog.ui.thousandrows.Page, goog.ui.Component);
 
+/**
+ * @override
+ * @param {string} id
+ * @return {?goog.ui.thousandrows.Row}
+ */
+goog.ui.thousandrows.Page.prototype.getChild;
+
+/**
+ * @override
+ * @param {number} index
+ * @return {?goog.ui.thousandrows.Row}
+ */
+goog.ui.thousandrows.Page.prototype.getChildAt;
+
 goog.ui.thousandrows.Page.prototype.createRow_ = function (id, rowHeight) {
   return new goog.ui.thousandrows.Row(id, rowHeight, null, this.getDomHelper());
 };
