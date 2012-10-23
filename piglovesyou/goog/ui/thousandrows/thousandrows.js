@@ -61,6 +61,22 @@ goog.ui.ThousandRows.prototype.baseCssName = 'goog-' + goog.ui.ThousandRows.prot
 
 
 /**
+ * @override
+ * @param {string} id
+ * @return {?goog.ui.thousandrows.Page}
+ */
+goog.ui.ThousandRows.prototype.getChild;
+
+
+/**
+ * @override
+ * @param {number} index
+ * @return {?goog.ui.thousandrows.Page}
+ */
+goog.ui.ThousandRows.prototype.getChildAt;
+
+
+/**
  * When we re-set model and data structure gets different,
  *   we may want to change this.rowHeight_.
  * @param {number} height
