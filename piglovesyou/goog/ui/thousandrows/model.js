@@ -32,7 +32,7 @@ goog.ui.thousandrows.Model = function (uri, opt_totalRowCount, opt_updateTotalWi
 
   this.xhr_ = /** @type {goog.net.XhrManager} */(opt_xhrManager || new goog.net.XhrManager);
 
-  this.initDataSource_(goog.isNumber(opt_totalRowCount) ? opt_totalRowCount : 0);
+  this.initDataSource_(goog.isNumber(opt_totalRowCount) ? opt_totalRowCount : -1);
 };
 goog.inherits(goog.ui.thousandrows.Model, goog.events.EventTarget);
 
@@ -119,7 +119,6 @@ goog.ui.thousandrows.Model.prototype.initDataSource_ = function (total) {
  * @param {string} path
  */
 goog.ui.thousandrows.Model.prototype.handleDataChange_ = function (path) {
-  var i = +path[path.length-1];
   var ds = goog.ds.Expr.create(path).getNode()
   if (ds) {
     if (ds.getDataName() == 'total') {
