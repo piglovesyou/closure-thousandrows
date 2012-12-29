@@ -188,7 +188,7 @@ goog.ui.thousandrows.Model.prototype.extractTotalFromJson = function (json) {
  * @return {!Array}
  */
 goog.ui.thousandrows.Model.prototype.extractRowsDataFromJson = function (json) {
-  return /** @type {!Array} */json['rows'];
+  return /** @type {!Array} */(json['rows']);
 };
 
 
