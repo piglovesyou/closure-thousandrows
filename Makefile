@@ -6,13 +6,22 @@ CLOSURELIB_DIR        = ./closure-library-read-only
 CLOSURELIB_REMOTE_DIR = http://closure-library.googlecode.com/svn/trunk/
 DUMMY_CLIENTSCRIPT_PATH    = public/javascripts/app.js
 
-setup:;
+setup: setup-closurecompiler setup-closurelibrary setup-thirdpartymodule
+
+setup-closurecompiler:;
 	rm -rf $(COMPILER_DIR) && \
 	wget -P $(COMPILER_DIR) $(COMPILER_REMOTE_DIR) && \
 	unzip -d $(COMPILER_DIR) $(COMPILER_DIR)$(COMPILER_ZIP) && \
-	rm $(COMPILER_DIR)$(COMPILER_ZIP) && \
-	rm -rf $(CLOSURELIB_DIR) && \
+	rm $(COMPILER_DIR)$(COMPILER_ZIP)
+
+setup-closurelibrary:;
+	rm -rf $(CLOSURELIB_DIR)
 	svn checkout $(CLOSURELIB_REMOTE_DIR) $(CLOSURELIB_DIR)
+
+setup-thirdpartymodule:;
+	git submodule init && \
+	git submodule update && \
+	git submodule foreach 'git reset --hard HEAD; git fetch; git checkout master; git pull;'
 
 compile:;
 	$(CLOSURELIB_DIR)/closure/bin/build/closurebuilder.py \
