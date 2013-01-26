@@ -10,19 +10,28 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<title>goog.ui.Scroller</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="UTF-8">
+  <title>goog.ui.ThousandRows</title>
   <link rel="stylesheet" href="../../../third_party/piglovesyou/goog/css/scroller.css" />
 
   <script src="../../../closure-library-read-only/closure/goog/base.js"></script>
 
   <!-- Native Modules that ThousandRows depends. -->
   <script type="text/javascript">
-    goog.require('goog.ui.Slider');
+    goog.require('goog.asserts');
+    goog.require('goog.dom');
+    goog.require('goog.dom.classes');
+    goog.require('goog.events.KeyCodes');
+    goog.require('goog.events.MouseWheelHandler');
+    goog.require('goog.events.MouseWheelHandler.EventType');
+    goog.require('goog.math');
+    goog.require('goog.style');
+    goog.require('goog.ui.Component.EventType');
     goog.require('goog.ui.Control');
-    goog.require('goog.iter');
-    goog.require('goog.math.Range');
-    goog.require('goog.Uri');
+    goog.require('goog.ui.SliderBase');
+    goog.require('goog.ui.SliderBase.Orientation');
+    goog.require('goog.userAgent');
   </script>
 
   <!-- Third party modules that ThousandRows depends. -->
@@ -83,9 +92,11 @@
   <!-- Decorates existing DOM. -->
   <script>
 
-    var thousandrows = new goog.ui.ThousandRows(39, 20);
+    var thousandrows = new goog.ui.ThousandRows(
+                    39,      // Required: Each row height.
+                    20);     // Required: How much rows a page contains.
     var model = new goog.ui.thousandrows.Model(
-                    '/rows', // URL through which thousandrows interacts with a server by xhr.
+                    '/rows', // Required: URL through which thousandrows interacts with a server by xhr.
                     10000,   // Optional: Total amount of rows.
                     true);   // Optional: Pass true if you want to update total amount
                              //            in terms of response content of xhr.
