@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (c) 2012 Soichi Takamura (http://stakam.net/)
+ * Copyright (c) 2012 Soichi Takamura (http://stakam.net/).
  *
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
@@ -11,19 +11,20 @@ goog.provide('goog.ui.thousandrows.Model');
 
 goog.require('goog.ds.DataManager');
 goog.require('goog.ds.JsXmlHttpDataSource');
-goog.require('goog.net.XhrManager');
 goog.require('goog.events.EventTarget');
+goog.require('goog.net.XhrManager');
 
 
 /**
- * @param {string} uri Uri. Also used as xhr request id.
+ * @param {string} uri Through which thousandrows interacts with a server
+ *    by xhr. Also it is used as request id of xhr.
  * @param {number=} opt_totalRowCount
  * @param {boolean=} opt_updateTotalWithJson
  * @param {goog.net.XhrManager=} opt_xhrManager
  * @constructor
  * @extends {goog.events.EventTarget}
  */
-goog.ui.thousandrows.Model = function (uri, opt_totalRowCount, opt_updateTotalWithJson, opt_xhrManager) {
+goog.ui.thousandrows.Model = function(uri, opt_totalRowCount, opt_updateTotalWithJson, opt_xhrManager) {
 
   goog.base(this);
 
@@ -65,13 +66,13 @@ goog.ui.thousandrows.Model.prototype.offsetParamKey_ = 'offset';
  * @param {string} count
  * @param {string} offset
  */
-goog.ui.thousandrows.Model.prototype.setParamKeys = function (count, offset) {
+goog.ui.thousandrows.Model.prototype.setParamKeys = function(count, offset) {
   this.countParamKey_ = count;
   this.offsetParamKey_ = offset;
 };
 
 
-goog.ui.thousandrows.Model.prototype.getTotal = function () {
+goog.ui.thousandrows.Model.prototype.getTotal = function() {
   return this.totalDs_.get();
 };
 
@@ -94,7 +95,7 @@ goog.ui.thousandrows.Model.prototype.id_;
 /**
  * @return {string}
  */
-goog.ui.thousandrows.Model.prototype.getId = function () {
+goog.ui.thousandrows.Model.prototype.getId = function() {
   return this.id_ || (this.id_ = 'thousandrowsmodel:' + goog.getUid(this));
 };
 
@@ -103,7 +104,7 @@ goog.ui.thousandrows.Model.prototype.getId = function () {
  * @param {number} total Supposed total of rows length. This value
  *                can be lazily initialized and can be updated after.
  */
-goog.ui.thousandrows.Model.prototype.initDataSource_ = function (total) {
+goog.ui.thousandrows.Model.prototype.initDataSource_ = function(total) {
   this.dm_ = goog.ds.DataManager.getInstance();
   this.ds_ = new goog.ds.FastDataNode({}, this.getId());
 
@@ -118,8 +119,8 @@ goog.ui.thousandrows.Model.prototype.initDataSource_ = function (total) {
 /**
  * @param {string} path
  */
-goog.ui.thousandrows.Model.prototype.handleDataChange_ = function (path) {
-  var ds = goog.ds.Expr.create(path).getNode()
+goog.ui.thousandrows.Model.prototype.handleDataChange_ = function(path) {
+  var ds = goog.ds.Expr.create(path).getNode();
   if (ds) {
     if (ds.getDataName() == 'total') {
       this.dispatchEvent(goog.ui.thousandrows.Model.EventType.UPDATE_TOTAL);
@@ -138,7 +139,7 @@ goog.ui.thousandrows.Model.prototype.handleDataChange_ = function (path) {
  * @param {number} index
  * @param {number} rowCountInPage
  */
-goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, rowCountInPage) {
+goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function(index, rowCountInPage) {
   var uri = this.buildUri_(index, rowCountInPage);
   var pageName = 'page' + index;
 
@@ -150,7 +151,7 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, row
       ds: storedDs
     });
   } else {
-    this.sendPageRequest_(uri, goog.bind(function (e) {
+    this.sendPageRequest_(uri, goog.bind(function(e) {
       var xhrio = e.target;
       var success = xhrio.isSuccess();
       var json = xhrio.getResponseJson();
@@ -177,7 +178,7 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function (index, row
 };
 
 
-goog.ui.thousandrows.Model.prototype.extractTotalFromJson = function (json) {
+goog.ui.thousandrows.Model.prototype.extractTotalFromJson = function(json) {
   return json['total'];
 };
 
@@ -187,7 +188,7 @@ goog.ui.thousandrows.Model.prototype.extractTotalFromJson = function (json) {
  * @param {Object|Array} json
  * @return {!Array}
  */
-goog.ui.thousandrows.Model.prototype.extractRowsDataFromJson = function (json) {
+goog.ui.thousandrows.Model.prototype.extractRowsDataFromJson = function(json) {
   return /** @type {!Array} */(json['rows']);
 };
 
@@ -196,7 +197,7 @@ goog.ui.thousandrows.Model.prototype.extractRowsDataFromJson = function (json) {
  * @param {string} uri
  * @param {Function} callback
  */
-goog.ui.thousandrows.Model.prototype.sendPageRequest_ = function (uri, callback) {
+goog.ui.thousandrows.Model.prototype.sendPageRequest_ = function(uri, callback) {
   if (goog.array.contains(this.xhr_.getOutstandingRequestIds(), uri)) return; // Xhr is in flight.
   var u = undefined;
   this.xhr_.send(
@@ -216,7 +217,7 @@ goog.ui.thousandrows.Model.prototype.sendPageRequest_ = function (uri, callback)
  * @param {number} rowCountInPage
  * @return {string}
  */
-goog.ui.thousandrows.Model.prototype.buildUri_ = function (index, rowCountInPage) {
+goog.ui.thousandrows.Model.prototype.buildUri_ = function(index, rowCountInPage) {
   var uri = goog.Uri.parse(this.uri_);
   uri.setParameterValue(this.countParamKey_, rowCountInPage);
   uri.setParameterValue(this.offsetParamKey_, index * rowCountInPage);
@@ -225,9 +226,9 @@ goog.ui.thousandrows.Model.prototype.buildUri_ = function (index, rowCountInPage
 
 
 /** @inheritDoc */
-goog.ui.thousandrows.Model.prototype.disposeInternal = function () {
+goog.ui.thousandrows.Model.prototype.disposeInternal = function() {
   if (this.xhr_) {
-    goog.array.forEach(this.xhr_.getOutstandingRequestIds(), function (id) {
+    goog.array.forEach(this.xhr_.getOutstandingRequestIds(), function(id) {
       this.abort(id, true);
     }, this.xhr_);
     this.xhr_.dispose();

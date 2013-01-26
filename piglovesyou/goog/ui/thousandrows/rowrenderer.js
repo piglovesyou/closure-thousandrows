@@ -4,7 +4,7 @@ goog.provide('goog.ui.thousandrows.RowRenderer');
 /**
  * @constructor
  */
-goog.ui.thousandrows.RowRenderer = function () {};
+goog.ui.thousandrows.RowRenderer = function() {};
 goog.addSingletonGetter(goog.ui.thousandrows.RowRenderer);
 
 
@@ -12,7 +12,7 @@ goog.addSingletonGetter(goog.ui.thousandrows.RowRenderer);
  * @param {goog.ui.thousandrows.Row} row
  * @return {Element}
  */
-goog.ui.thousandrows.RowRenderer.prototype.createDom = function (row) {
+goog.ui.thousandrows.RowRenderer.prototype.createDom = function(row) {
   return row.getDomHelper().createDom('div', {
     className: row.getCssName()
     // style: 'height: ' + this.height_ + 'px'
@@ -25,7 +25,7 @@ goog.ui.thousandrows.RowRenderer.prototype.createDom = function (row) {
  * @param {Object} record
  * @return {Node}
  */
-goog.ui.thousandrows.RowRenderer.prototype.renderContent = function (row, record) {
+goog.ui.thousandrows.RowRenderer.prototype.renderContent = function(row, record) {
   goog.asserts.assert(record['index'] || record['title'] || record['body'], 'Use custom row renderer.');
   var dh = row.getDomHelper();
   var fragment = dh.getDocument().createDocumentFragment();

@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (c) 2012 Soichi Takamura (http://stakam.net/)
+ * Copyright (c) 2012 Soichi Takamura (http://stakam.net/).
  *
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
@@ -18,7 +18,7 @@ goog.require('goog.ui.Scroller');
  * @param {goog.dom.DomHelper=} opt_domHelper
  * @extends {goog.ui.Scroller}
  */
-goog.ui.thousandrows.VirtualScroller = function (opt_orient, opt_domHelper) {
+goog.ui.thousandrows.VirtualScroller = function(opt_orient, opt_domHelper) {
   goog.base(this, opt_orient, opt_domHelper);
 };
 goog.inherits(goog.ui.thousandrows.VirtualScroller, goog.ui.Scroller);
@@ -33,17 +33,17 @@ goog.ui.thousandrows.VirtualScroller.prototype.virtualScrollHeight_ = -1;
 /**
  * Call this before `decorate' or `update'.
  */
-goog.ui.thousandrows.VirtualScroller.prototype.setVirtualScrollHeight = function (scrollHeight) {
+goog.ui.thousandrows.VirtualScroller.prototype.setVirtualScrollHeight = function(scrollHeight) {
   this.virtualScrollHeight_ = scrollHeight;
 };
 
 
-goog.ui.thousandrows.VirtualScroller.prototype.getVirtualScrollTop = function () {
+goog.ui.thousandrows.VirtualScroller.prototype.getVirtualScrollTop = function() {
   return Math.round(this.getScrollableRange() * this.getSlider().getRate());
 };
 
 
-/** 
+/**
  * We never use this in virtualScroller.
  * @override
  */
@@ -54,6 +54,6 @@ goog.ui.thousandrows.VirtualScroller.prototype.adjustValueByScroll_ = goog.nullF
  * Provide virtual scroll height, not actual one.
  * @inheritDoc
  */
-goog.ui.thousandrows.VirtualScroller.prototype.getScrollHeight = function () {
+goog.ui.thousandrows.VirtualScroller.prototype.getScrollHeight = function() {
   return this.virtualScrollHeight_ >= 0 ? this.virtualScrollHeight_ : this.containerElm_.scrollHeight;
 };

@@ -15,17 +15,17 @@
   <link rel="stylesheet" href="../../../third_party/piglovesyou/goog/css/scroller.css" />
 
   <script src="../../../closure-library-read-only/closure/goog/base.js"></script>
+
+  <!-- Native Modules that ThousandRows depends. -->
   <script type="text/javascript">
     goog.require('goog.ui.Slider');
     goog.require('goog.ui.Control');
     goog.require('goog.iter');
     goog.require('goog.math.Range');
     goog.require('goog.Uri');
-
-    goog.require('goog.ds.JsXmlHttpDataSource');
-    goog.require('goog.ds.DataManager');
-
   </script>
+
+  <!-- Third party modules that ThousandRows depends. -->
   <script src="../../../third_party/piglovesyou/goog/ui/scroller.js"></script>
   <script src="../ui/thousandrows/virtualscroller.js"></script>
   <script src="../ui/thousandrows/rowrenderer.js"></script>
@@ -33,6 +33,7 @@
   <script src="../ui/thousandrows/page.js"></script>
   <script src="../ui/thousandrows/model.js"></script>
   <script src="../ui/thousandrows/thousandrows.js"></script>
+
   <script type="text/javascript">
     goog.require('goog.ui.ThousandRows');
   </script>
@@ -65,9 +66,8 @@
       padding-right: 10px;
     }
     #my-thousandrows .row-index {
-      width: 30px;
       text-align: center;
-      padding: 0;
+      padding: 0 4px;
     }
   </style>
 
@@ -80,22 +80,19 @@
     <div class="goog-scroller-container"></div>
   </div>
 
-  <!--script src="/tmp/min.js"></script-->
+  <!-- Decorates existing DOM. -->
   <script>
+
     var thousandrows = new goog.ui.ThousandRows(39, 20);
-    var model = new goog.ui.thousandrows.Model('/rows', 10000, true);
+    var model = new goog.ui.thousandrows.Model(
+                    '/rows', // URL through which thousandrows interacts with a server by xhr.
+                    10000,   // Optional: Total amount of rows.
+                    true);   // Optional: Pass true if you want to update total amount
+                             //            in terms of response content of xhr.
 
     thousandrows.decorate(goog.dom.getElement('my-thousandrows'));
     thousandrows.setModel(model);
 
-    // setInterval(function () {
-    //   console.log(goog.ds.DataManager.getInstance().get());
-    // }, 1200);
-
-    // setTimeout(function () {
-    //   thousandrows.getModel().dispose();
-    //   thousandrows.setModel(new goog.ui.thousandrows.Model('/rows', 10000, true));
-    // }, 4000);
   </script>
 
 </body>

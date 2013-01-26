@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (c) 2012 Soichi Takamura (http://stakam.net/)
+ * Copyright (c) 2012 Soichi Takamura (http://stakam.net/).
  *
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
@@ -21,14 +21,14 @@ goog.require('goog.ui.thousandrows.Row');
  * @constructor
  * @extends {goog.ui.Component}
  */
-goog.ui.thousandrows.Page = function (pageIndex, rowCount, rowHeight, opt_domHelper) {
+goog.ui.thousandrows.Page = function(pageIndex, rowCount, rowHeight, opt_domHelper) {
   goog.base(this, opt_domHelper);
   this.setId('' + pageIndex);
   this.rowCount_ = rowCount;
 
   var dh = this.getDomHelper();
   var rowOffset = pageIndex * rowCount;
-  goog.iter.forEach(goog.iter.range(rowCount), function (i) {
+  goog.iter.forEach(goog.iter.range(rowCount), function(i) {
     this.addChild(this.createRow_(rowOffset + i, rowHeight));
   }, this);
 };
@@ -48,17 +48,17 @@ goog.ui.thousandrows.Page.prototype.getChild;
  */
 goog.ui.thousandrows.Page.prototype.getChildAt;
 
-goog.ui.thousandrows.Page.prototype.createRow_ = function (id, rowHeight) {
+goog.ui.thousandrows.Page.prototype.createRow_ = function(id, rowHeight) {
   return new goog.ui.thousandrows.Row(id, rowHeight, null, this.getDomHelper());
 };
 
 /** @inheritDoc */
-goog.ui.thousandrows.Page.prototype.createDom = function () {
+goog.ui.thousandrows.Page.prototype.createDom = function() {
   var dh = this.getDomHelper();
   var elm = this.getDomHelper().createDom('div', this.getCssName());
   this.setElementInternal(elm);
 
-	this.forEachChild(function (row) {
+	this.forEachChild(function(row) {
 		row.createDom();
     dh.appendChild(this.getContentElement(), row.getElement());
 	}, this);
@@ -67,9 +67,9 @@ goog.ui.thousandrows.Page.prototype.createDom = function () {
 /**
  * @param {Array} rowsData
  */
-goog.ui.thousandrows.Page.prototype.renderRowsContent = function (rowsData) {
+goog.ui.thousandrows.Page.prototype.renderRowsContent = function(rowsData) {
   goog.asserts.assert(goog.isArray(rowsData) || rowsData.length <= this.getChildCount(), 'Passed records are something wrong.');
-	this.forEachChild(function (row, index) {
+	this.forEachChild(function(row, index) {
     var record = rowsData[index];
     if (record) {
       row.renderContent(record);
@@ -79,7 +79,7 @@ goog.ui.thousandrows.Page.prototype.renderRowsContent = function (rowsData) {
 	}, this);
 };
 
-goog.ui.thousandrows.Page.prototype.getCssName = function () {
+goog.ui.thousandrows.Page.prototype.getCssName = function() {
   return goog.getCssName(this.getParent().baseCssName, 'page');
 };
 

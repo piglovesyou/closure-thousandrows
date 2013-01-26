@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (c) 2012 Soichi Takamura (http://stakam.net/)
+ * Copyright (c) 2012 Soichi Takamura (http://stakam.net/).
  *
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
@@ -9,9 +9,9 @@
 
 goog.provide('goog.ui.thousandrows.Row');
 
-goog.require('goog.ui.thousandrows.RowRenderer');
-goog.require('goog.ui.Component');
 goog.require('goog.dom.classes');
+goog.require('goog.ui.Component');
+goog.require('goog.ui.thousandrows.RowRenderer');
 
 /**
  * @param {string|number} rowIndex
@@ -20,7 +20,7 @@ goog.require('goog.dom.classes');
  * @constructor
  * @extends {goog.ui.Component}
  */
-goog.ui.thousandrows.Row = function (rowIndex, height, opt_renderer, opt_domHelper) {
+goog.ui.thousandrows.Row = function(rowIndex, height, opt_renderer, opt_domHelper) {
   goog.base(this, opt_domHelper);
 
   this.setId('' + rowIndex);
@@ -38,14 +38,14 @@ goog.ui.thousandrows.Row = function (rowIndex, height, opt_renderer, opt_domHelp
 goog.inherits(goog.ui.thousandrows.Row, goog.ui.Component);
 
 
-goog.ui.thousandrows.Row.prototype.enterDocument = function () {
+goog.ui.thousandrows.Row.prototype.enterDocument = function() {
 	goog.base(this, 'enterDocument');
 };
 
 /**
  * @param {Object} record
  */
-goog.ui.thousandrows.Row.prototype.renderContent = function (record) {
+goog.ui.thousandrows.Row.prototype.renderContent = function(record) {
   if (!this.isInDocument()) return;
   var content = this.getContentElement();
   goog.dom.removeChildren(content);
@@ -60,7 +60,7 @@ goog.ui.thousandrows.Row.prototype.renderContent = function (record) {
 /**
  * @param {Object} record
  */
-goog.ui.thousandrows.Row.prototype.renderContent_ = function (record) {
+goog.ui.thousandrows.Row.prototype.renderContent_ = function(record) {
   this.getDomHelper().appendChild(/** @type {!Node} */(this.getContentElement()),
       this.renderer_.renderContent(this, record));
 };
@@ -73,21 +73,21 @@ goog.ui.thousandrows.Row.prototype.hasContent_ = false;
 /**
  * @return {boolean}
  */
-goog.ui.thousandrows.Row.prototype.hasContent = function () {
+goog.ui.thousandrows.Row.prototype.hasContent = function() {
   return !!this.hasContent_;
 };
 
 /**
  * @param {boolean} rendered Whether the content rendered or not.
  */
-goog.ui.thousandrows.Row.prototype.asRendered_ = function (rendered) {
+goog.ui.thousandrows.Row.prototype.asRendered_ = function(rendered) {
   goog.dom.classes.enable(this.getElement(),
       goog.getCssName(this.getCssName(), 'notrendered'), !rendered);
   this.hasContent_ = !!rendered;
 };
 
 /** @inheritDoc */
-goog.ui.thousandrows.Row.prototype.createDom = function () {
+goog.ui.thousandrows.Row.prototype.createDom = function() {
   var elm = this.renderer_.createDom(this);
   this.setElementInternal(elm);
   this.asRendered_(false);
@@ -98,9 +98,9 @@ goog.ui.thousandrows.Row.prototype.createDom = function () {
  */
 goog.ui.thousandrows.Row.prototype.baseCssName;
 
-goog.ui.thousandrows.Row.prototype.getCssName = function () {
+goog.ui.thousandrows.Row.prototype.getCssName = function() {
   return this.baseCssName ||
-      (this.baseCssName = 
+      (this.baseCssName =
         (this.getParent() &&
          this.getParent().getParent().baseCssName &&
          goog.getCssName(this.getParent().getParent().baseCssName || 'thousandrows', 'row')));
