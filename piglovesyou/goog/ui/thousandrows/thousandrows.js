@@ -22,18 +22,38 @@ goog.require('goog.ui.thousandrows.VirtualScroller');
 /**
  * @param {number} rowHeight DOM height of row, by which ThousandRows
  *                           calcurates virtual scroll height.
- * @param {number} rowCountInPage
- * @param {?goog.ui.Scroller.ORIENTATION=} opt_orient Only VERTICAL or BOTH are available.
- * @param {goog.dom.DomHelper=} opt_domHelper
+ * @param {number} rowCountInPage .
+ * @param {?goog.ui.Scroller.ORIENTATION=} opt_orient Only
+ *    VERTICAL or BOTH are available.
+ * @param {goog.dom.DomHelper=} opt_domHelper .
  * @constructor
  * @extends {goog.ui.thousandrows.VirtualScroller}
  */
-goog.ui.ThousandRows = function(rowHeight, rowCountInPage, opt_orient, opt_domHelper) {
-  goog.asserts.assert(opt_orient != goog.ui.Scroller.ORIENTATION.HORIZONTAL, 'Only VERTICAL or BOTH are available.');
-  goog.base(this, opt_orient || goog.ui.Scroller.ORIENTATION.VERTICAL, opt_domHelper);
+goog.ui.ThousandRows = function(rowHeight,
+                                rowCountInPage, opt_orient, opt_domHelper) {
+  goog.asserts.assert(opt_orient != goog.ui.Scroller.ORIENTATION.HORIZONTAL,
+                      'Only VERTICAL or BOTH are available.');
+  goog.base(this, opt_orient || goog.ui.Scroller.ORIENTATION.VERTICAL,
+            opt_domHelper);
 
+  /**
+   * @type {number}
+   * @private
+   */
   this.rowHeight_ = rowHeight;
+
+  /**
+   * @type {number}
+   * @private
+   */
   this.rowCountInPage_ = rowCountInPage;
+
+
+  /**
+   * @type {goog.Timer}
+   * @private
+   */
+  this.updateTimer_ = new goog.Timer(200);
 
 };
 goog.inherits(goog.ui.ThousandRows, goog.ui.thousandrows.VirtualScroller);
@@ -57,21 +77,22 @@ goog.ui.ThousandRows.prototype.baseName = 'thousandrows';
 /**
  * @type {string}
  */
-goog.ui.ThousandRows.prototype.baseCssName = 'goog-' + goog.ui.ThousandRows.prototype.baseName;
+goog.ui.ThousandRows.prototype.baseCssName = 'goog-' +
+    goog.ui.ThousandRows.prototype.baseName;
 
 
 /**
  * @override
- * @param {string} id
- * @return {?goog.ui.thousandrows.Page}
+ * @param {string} id .
+ * @return {?goog.ui.thousandrows.Page} .
  */
 goog.ui.ThousandRows.prototype.getChild;
 
 
 /**
  * @override
- * @param {number} index
- * @return {?goog.ui.thousandrows.Page}
+ * @param {number} index .
+ * @return {?goog.ui.thousandrows.Page} .
  */
 goog.ui.ThousandRows.prototype.getChildAt;
 
@@ -79,7 +100,7 @@ goog.ui.ThousandRows.prototype.getChildAt;
 /**
  * When we re-set model and data structure gets different,
  *   we may want to change this.rowHeight_.
- * @param {number} height
+ * @param {number} height .
  */
 goog.ui.ThousandRows.prototype.setRowHeight = function(height) {
   this.rowHeight_ = height;
@@ -88,7 +109,7 @@ goog.ui.ThousandRows.prototype.setRowHeight = function(height) {
 
 /**
  * Also, we may want to change this.rowCountInPage_.
- * @param {number} count
+ * @param {number} count .
  */
 goog.ui.ThousandRows.prototype.setRowCountInPane = function(count) {
   this.rowCountInPage_ = count;
@@ -117,16 +138,18 @@ goog.ui.ThousandRows.prototype.setModel = function(model) {
 
 
 /**
- * @return {?goog.ui.thousandrows.Model}
- * @override
+ * @return {?goog.ui.thousandrows.Model} .
+ * @inheritDoc
  */
 goog.ui.ThousandRows.prototype.getModel = function() {
-  return /** @type {?goog.ui.thousandrows.Model} */(goog.base(this, 'getModel'));
+  return /** @type {?goog.ui.thousandrows.Model} */(
+      goog.base(this, 'getModel'));
 };
 
 
 /**
  * Call this before `decorate' or `update'.
+ * @private
  */
 goog.ui.ThousandRows.prototype.updateTotal_ = function() {
   this.setVirtualScrollHeight(this.rowHeight_ * this.getModel().getTotal());
@@ -134,8 +157,10 @@ goog.ui.ThousandRows.prototype.updateTotal_ = function() {
 };
 
 
-goog.ui.ThousandRows.prototype.updateTimer_ = new goog.Timer(200);
-
+/**
+ * @param {goog.events.Event} e .
+ * @private
+ */
 goog.ui.ThousandRows.prototype.handleUpdateTotal_ = function(e) {
   this.updateTotal_();
   // TODO: Scroll daragger flicks. Fix it.
@@ -154,12 +179,20 @@ goog.ui.ThousandRows.prototype.handleUpdateTotal_ = function(e) {
 };
 
 
+/**
+ * @param {goog.events.Event} e .
+ * @private
+ */
 goog.ui.ThousandRows.prototype.handleUpdateTimerTick_ = function(e) {
   this.updateTimer_.stop();
   this.update();
 };
 
 
+/**
+ * @param {goog.events.Event} e .
+ * @private
+ */
 goog.ui.ThousandRows.prototype.handleUpdatePage_ = function(e) {
   var ds = e.ds;
   var page = this.getChild('' + ds.index);
@@ -193,25 +226,33 @@ goog.ui.ThousandRows.prototype.canDecorate = function(element) {
 /** @inheritDoc */
 goog.ui.ThousandRows.prototype.enterDocument = function() {
   goog.base(this, 'enterDocument');
-  this.getHandler().listen(this.updateTimer_, goog.Timer.TICK, this.handleUpdateTimerTick_);
+  this.getHandler().listen(this.updateTimer_,
+                           goog.Timer.TICK, this.handleUpdateTimerTick_);
   if (this.hasModel()) {
-    this.observeModel_(); // TODO: Shoud I call it before `enterDocument' of superClass?
+    // TODO: Shoud I call it before `enterDocument' of superClass?
+    this.observeModel_();
   }
 };
 
 
+/**
+ * TODO: Write doc.
+ * @private
+ */
 goog.ui.ThousandRows.prototype.observeModel_ = function() {
   var model = this.getModel();
   this.getHandler()
-    .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_TOTAL, this.handleUpdateTotal_)
-    .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_PAGE, this.handleUpdatePage_);
+    .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_TOTAL,
+            this.handleUpdateTotal_)
+    .listen(model, goog.ui.thousandrows.Model.EventType.UPDATE_PAGE,
+            this.handleUpdatePage_);
   this.updateTotal_();
   this.adjustScrollTop(goog.ui.Scroller.ORIENTATION.VERTICAL);
 };
 
 
 /**
- * @return {boolean}
+ * @return {boolean} .
  */
 goog.ui.ThousandRows.prototype.hasModel = function() {
   return this.getModel() instanceof goog.ui.thousandrows.Model;
@@ -229,6 +270,9 @@ goog.ui.ThousandRows.prototype.adjustScrollTop = function(orient) {
 };
 
 
+/**
+ * @private
+ */
 goog.ui.ThousandRows.prototype.renderPages_ = function() {
   var range = this.getExistingPageRange_();
   goog.array.forEach(this.getChildIds(), function(id) {
@@ -245,11 +289,12 @@ goog.ui.ThousandRows.prototype.renderPages_ = function() {
 
 
 /**
- * @param {number} pageIndex
- * @return {goog.ui.thousandrows.Page}
+ * @param {number} pageIndex .
+ * @return {goog.ui.thousandrows.Page} .
  */
 goog.ui.ThousandRows.prototype.createPage = function(pageIndex) {
-  var page = /** @type {?goog.ui.thousandrows.Page} */(this.getChild('' + pageIndex));
+  var page = /** @type {?goog.ui.thousandrows.Page} */(
+        this.getChild('' + pageIndex));
   if (!page) {
     page = this.createPage_(pageIndex);
 
@@ -269,8 +314,10 @@ goog.ui.ThousandRows.prototype.createPage = function(pageIndex) {
 
 
 /**
- * @return {goog.ui.thousandrows.Page}
+ * @param {number} pageIndex .
+ * @return {goog.ui.thousandrows.Page} .
  * @protected
+ * @suppress {underscore}
  */
 goog.ui.ThousandRows.prototype.createPage_ = function(pageIndex) {
   return new goog.ui.thousandrows.Page(pageIndex,
@@ -279,7 +326,8 @@ goog.ui.ThousandRows.prototype.createPage_ = function(pageIndex) {
 
 
 /**
- * @return {goog.math.Range}
+ * @return {goog.math.Range} .
+ * @private
  */
 goog.ui.ThousandRows.prototype.getExistingPageRange_ = function() {
   var pageIndex = this.getPageIndex_();
@@ -290,7 +338,8 @@ goog.ui.ThousandRows.prototype.getExistingPageRange_ = function() {
 
 
 /**
- * @return {number}
+ * @return {number} .
+ * @private
  */
 goog.ui.ThousandRows.prototype.getPageIndex_ = function() {
   return Math.floor(this.getVirtualScrollTop() / this.getPageHeight_());
@@ -298,7 +347,8 @@ goog.ui.ThousandRows.prototype.getPageIndex_ = function() {
 
 
 /**
- * @return {number}
+ * @return {number} .
+ * @private
  */
 goog.ui.ThousandRows.prototype.getMargin_ = function() {
   var margin = this.getVirtualScrollTop() % this.getPageHeight_();
@@ -310,7 +360,8 @@ goog.ui.ThousandRows.prototype.getMargin_ = function() {
 
 
 /**
- * @return {number}
+ * @return {number} .
+ * @private
  */
 goog.ui.ThousandRows.prototype.getPageHeight_ = function() {
   return this.rowHeight_ * this.rowCountInPage_;
@@ -318,7 +369,8 @@ goog.ui.ThousandRows.prototype.getPageHeight_ = function() {
 
 
 /**
- * @return {number}
+ * @return {number} .
+ * @private
  */
 goog.ui.ThousandRows.prototype.getMaxPageIndex_ = function() {
   return Math.ceil(this.getModel().getTotal() / this.rowCountInPage_) - 1;
