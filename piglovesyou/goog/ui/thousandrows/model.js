@@ -18,22 +18,28 @@ goog.require('goog.net.XhrManager');
 /**
  * @param {string} uri Through which thousandrows interacts with a server
  *    by xhr. Also it is used as request id of xhr.
- * @param {number=} opt_totalRowCount
- * @param {boolean=} opt_updateTotalWithJson
- * @param {goog.net.XhrManager=} opt_xhrManager
+ * @param {number=} opt_totalRowCount .
+ * @param {boolean=} opt_updateTotalWithJson .
+ * @param {goog.net.XhrManager=} opt_xhrManager .
  * @constructor
  * @extends {goog.events.EventTarget}
  */
-goog.ui.thousandrows.Model = function(uri, opt_totalRowCount, opt_updateTotalWithJson, opt_xhrManager) {
+goog.ui.thousandrows.Model = function(uri,
+    opt_totalRowCount, opt_updateTotalWithJson, opt_xhrManager) {
 
   goog.base(this);
 
   this.uri_ = uri;
   this.updateTotalWithJson_ = !!opt_updateTotalWithJson;
 
-  this.xhr_ = /** @type {goog.net.XhrManager} */(opt_xhrManager || new goog.net.XhrManager);
+  /**
+   * @type {goog.net.XhrManager}
+   * @private
+   */
+  this.xhr_ = (opt_xhrManager || new goog.net.XhrManager);
 
-  this.initDataSource_(goog.isNumber(opt_totalRowCount) ? opt_totalRowCount : -1);
+  this.initDataSource_(goog.isNumber(opt_totalRowCount) ?
+                       opt_totalRowCount : -1);
 };
 goog.inherits(goog.ui.thousandrows.Model, goog.events.EventTarget);
 
@@ -52,19 +58,21 @@ goog.ui.thousandrows.Model.prototype.ds_;
 
 /**
  * @type {string}
+ * @private
  */
 goog.ui.thousandrows.Model.prototype.countParamKey_ = 'count';
 
 
 /**
  * @type {string}
+ * @private
  */
 goog.ui.thousandrows.Model.prototype.offsetParamKey_ = 'offset';
 
 
 /**
- * @param {string} count
- * @param {string} offset
+ * @param {string} count .
+ * @param {string} offset .
  */
 goog.ui.thousandrows.Model.prototype.setParamKeys = function(count, offset) {
   this.countParamKey_ = count;
@@ -72,6 +80,9 @@ goog.ui.thousandrows.Model.prototype.setParamKeys = function(count, offset) {
 };
 
 
+/**
+ * @return {number} .
+ */
 goog.ui.thousandrows.Model.prototype.getTotal = function() {
   return this.totalDs_.get();
 };
@@ -93,7 +104,7 @@ goog.ui.thousandrows.Model.prototype.id_;
 
 
 /**
- * @return {string}
+ * @return {string} .
  */
 goog.ui.thousandrows.Model.prototype.getId = function() {
   return this.id_ || (this.id_ = 'thousandrowsmodel:' + goog.getUid(this));
@@ -103,6 +114,7 @@ goog.ui.thousandrows.Model.prototype.getId = function() {
 /**
  * @param {number} total Supposed total of rows length. This value
  *                can be lazily initialized and can be updated after.
+ * @private
  */
 goog.ui.thousandrows.Model.prototype.initDataSource_ = function(total) {
   this.dm_ = goog.ds.DataManager.getInstance();
@@ -112,12 +124,14 @@ goog.ui.thousandrows.Model.prototype.initDataSource_ = function(total) {
   this.ds_.add(this.totalDs_);
 
   this.dm_.addDataSource(this.ds_);
-  this.dm_.addListener(goog.bind(this.handleDataChange_, this), '$' + this.getId() + '/...');
+  this.dm_.addListener(goog.bind(this.handleDataChange_, this),
+                       '$' + this.getId() + '/...');
 };
 
 
 /**
- * @param {string} path
+ * @param {string} path .
+ * @private
  */
 goog.ui.thousandrows.Model.prototype.handleDataChange_ = function(path) {
   var ds = goog.ds.Expr.create(path).getNode();
@@ -136,14 +150,16 @@ goog.ui.thousandrows.Model.prototype.handleDataChange_ = function(path) {
 
 
 /**
- * @param {number} index
- * @param {number} rowCountInPage
+ * @param {number} index .
+ * @param {number} rowCountInPage .
  */
-goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function(index, rowCountInPage) {
+goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex =
+    function(index, rowCountInPage) {
   var uri = this.buildUri_(index, rowCountInPage);
   var pageName = 'page' + index;
 
-  var storedDs = goog.ds.Expr.create(this.ds_.getDataName() + '/' + pageName).getValue();
+  var storedDs = goog.ds.Expr.create(this.ds_.getDataName() +
+                                     '/' + pageName).getValue();
   if (storedDs) {
     // TODO: Just return rowsData.
     this.dispatchEvent({
@@ -178,6 +194,13 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex = function(index, rowC
 };
 
 
+/**
+ * Returns total amount of rows in server. Override this method
+ * to extract it in your JSON.
+ * @param {Object} json Raw response JSON.
+ * @return {number} .
+ * @protected
+ */
 goog.ui.thousandrows.Model.prototype.extractTotalFromJson = function(json) {
   return json['total'];
 };
@@ -185,8 +208,8 @@ goog.ui.thousandrows.Model.prototype.extractTotalFromJson = function(json) {
 
 /**
  * Override this method if your json is not row data array.
- * @param {Object|Array} json
- * @return {!Array}
+ * @param {Object|Array} json .
+ * @return {!Array} .
  */
 goog.ui.thousandrows.Model.prototype.extractRowsDataFromJson = function(json) {
   return /** @type {!Array} */(json['rows']);
@@ -194,11 +217,15 @@ goog.ui.thousandrows.Model.prototype.extractRowsDataFromJson = function(json) {
 
 
 /**
- * @param {string} uri
- * @param {Function} callback
+ * @param {string} uri .
+ * @param {Function} callback .
+ * @private
  */
-goog.ui.thousandrows.Model.prototype.sendPageRequest_ = function(uri, callback) {
-  if (goog.array.contains(this.xhr_.getOutstandingRequestIds(), uri)) return; // Xhr is in flight.
+goog.ui.thousandrows.Model.prototype.sendPageRequest_ = function(uri,
+                                                                 callback) {
+  if (goog.array.contains(this.xhr_.getOutstandingRequestIds(), uri)) {
+    return; // Xhr is in flight.
+  }
   var u = undefined;
   this.xhr_.send(
       uri,
@@ -213,11 +240,13 @@ goog.ui.thousandrows.Model.prototype.sendPageRequest_ = function(uri, callback) 
 
 
 /**
- * @param {number} index
- * @param {number} rowCountInPage
- * @return {string}
+ * @param {number} index .
+ * @param {number} rowCountInPage .
+ * @return {string} .
+ * @private
  */
-goog.ui.thousandrows.Model.prototype.buildUri_ = function(index, rowCountInPage) {
+goog.ui.thousandrows.Model.prototype.buildUri_ = function(index,
+                                                          rowCountInPage) {
   var uri = goog.Uri.parse(this.uri_);
   uri.setParameterValue(this.countParamKey_, rowCountInPage);
   uri.setParameterValue(this.offsetParamKey_, index * rowCountInPage);
