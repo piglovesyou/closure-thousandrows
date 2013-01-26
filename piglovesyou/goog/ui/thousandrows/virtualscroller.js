@@ -14,8 +14,8 @@ goog.require('goog.ui.Scroller');
 
 /**
  * @constructor
- * @param {?goog.ui.Scroller.ORIENTATION=} opt_orient
- * @param {goog.dom.DomHelper=} opt_domHelper
+ * @param {?goog.ui.Scroller.ORIENTATION=} opt_orient .
+ * @param {goog.dom.DomHelper=} opt_domHelper .
  * @extends {goog.ui.Scroller}
  */
 goog.ui.thousandrows.VirtualScroller = function(opt_orient, opt_domHelper) {
@@ -26,28 +26,36 @@ goog.inherits(goog.ui.thousandrows.VirtualScroller, goog.ui.Scroller);
 
 /**
  * @type {number}
+ * @private
  */
 goog.ui.thousandrows.VirtualScroller.prototype.virtualScrollHeight_ = -1;
 
 
 /**
  * Call this before `decorate' or `update'.
+ * @param {number} scrollHeight .
  */
-goog.ui.thousandrows.VirtualScroller.prototype.setVirtualScrollHeight = function(scrollHeight) {
+goog.ui.thousandrows.VirtualScroller.prototype.
+    setVirtualScrollHeight = function(scrollHeight) {
   this.virtualScrollHeight_ = scrollHeight;
 };
 
 
-goog.ui.thousandrows.VirtualScroller.prototype.getVirtualScrollTop = function() {
+/**
+ * @return {number} .
+ */
+goog.ui.thousandrows.VirtualScroller.prototype.
+    getVirtualScrollTop = function() {
   return Math.round(this.getScrollableRange() * this.getSlider().getRate());
 };
 
 
 /**
  * We never use this in virtualScroller.
- * @override
+ * @suppress {underscore}
  */
-goog.ui.thousandrows.VirtualScroller.prototype.adjustValueByScroll_ = goog.nullFunction;
+goog.ui.thousandrows.VirtualScroller.prototype.adjustValueByScroll_ =
+    goog.nullFunction;
 
 
 /**
@@ -55,5 +63,6 @@ goog.ui.thousandrows.VirtualScroller.prototype.adjustValueByScroll_ = goog.nullF
  * @inheritDoc
  */
 goog.ui.thousandrows.VirtualScroller.prototype.getScrollHeight = function() {
-  return this.virtualScrollHeight_ >= 0 ? this.virtualScrollHeight_ : this.containerElm_.scrollHeight;
+  return this.virtualScrollHeight_ >= 0 ?
+      this.virtualScrollHeight_ : this.containerElm_.scrollHeight;
 };
