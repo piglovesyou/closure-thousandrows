@@ -245,7 +245,8 @@ goog.ui.thousandrows.Model.prototype.sendPageRequest_ = function(uri,
  * @param {number} index .
  * @param {number} rowCountInPage .
  * @return {string} .
- * @private
+ * @protected
+ * @suppress {underscore}
  */
 goog.ui.thousandrows.Model.prototype.buildUri_ = function(index,
                                                           rowCountInPage) {
