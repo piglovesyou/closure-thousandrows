@@ -8,15 +8,22 @@
  */
 
 goog.provide('goog.ui.ThousandRows');
+goog.provide('goog.ui.ThousandRows.EventType');
 
-goog.require('goog.Uri');
+goog.require('goog.Timer');
+goog.require('goog.array');
+goog.require('goog.asserts');
+goog.require('goog.dom.classes');
+goog.require('goog.events');
+goog.require('goog.events.Event');
 goog.require('goog.iter');
+goog.require('goog.math');
 goog.require('goog.math.Range');
+goog.require('goog.ui.Scroller');
 goog.require('goog.ui.thousandrows.Model');
+goog.require('goog.ui.thousandrows.Model.EventType');
 goog.require('goog.ui.thousandrows.Page');
-goog.require('goog.ui.thousandrows.Row');
 goog.require('goog.ui.thousandrows.VirtualScroller');
-
 
 
 /**
@@ -190,14 +197,14 @@ goog.ui.ThousandRows.prototype.handleUpdateTimerTick_ = function(e) {
 
 
 /**
- * @param {goog.events.Event} e .
+ * @param {goog.ui.thousandrows.Model.Event} e .
  * @private
  */
 goog.ui.ThousandRows.prototype.handleUpdatePage_ = function(e) {
   var ds = e.ds;
-  var page = this.getChild('' + ds.index);
+  var page = this.getChild('' + /** @type {number} */(ds.index));
   if (page && page.isInDocument()) {
-    page.renderRowsContent(ds.rowsData);
+    page.renderRowsContent(/** @type {Array} */(ds.rowsData));
   }
   this.dispatchEvent(goog.ui.ThousandRows.EventType.UPDATE_PAGE);
 };

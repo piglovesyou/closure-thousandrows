@@ -8,9 +8,14 @@
  */
 
 goog.provide('goog.ui.thousandrows.Model');
+goog.provide('goog.ui.thousandrows.Model.EventType');
 
+goog.require('goog.Uri');
+goog.require('goog.array');
 goog.require('goog.ds.DataManager');
-goog.require('goog.ds.JsXmlHttpDataSource');
+goog.require('goog.ds.Expr');
+goog.require('goog.ds.FastDataNode');
+goog.require('goog.ds.PrimitiveFastDataNode');
 goog.require('goog.events.EventTarget');
 goog.require('goog.net.XhrManager');
 
@@ -134,16 +139,15 @@ goog.ui.thousandrows.Model.prototype.initDataSource_ = function(total) {
  * @private
  */
 goog.ui.thousandrows.Model.prototype.handleDataChange_ = function(path) {
-  var ds = goog.ds.Expr.create(path).getNode();
+  var ds = /** @type {?goog.ds.FastDataNode} */(
+            goog.ds.Expr.create(path).getNode());
   if (ds) {
     if (ds.getDataName() == 'total') {
       this.dispatchEvent(goog.ui.thousandrows.Model.EventType.UPDATE_TOTAL);
     } else {
       // TODO: Just dispatch with page index.
-      this.dispatchEvent({
-        type: goog.ui.thousandrows.Model.EventType.UPDATE_PAGE,
-        ds: ds
-      });
+      this.dispatchEvent(new goog.ui.thousandrows.Model.Event(
+          goog.ui.thousandrows.Model.EventType.UPDATE_PAGE, ds));
     }
   }
 };
@@ -158,14 +162,12 @@ goog.ui.thousandrows.Model.prototype.getRecordAtPageIndex =
   var uri = this.buildUri_(index, rowCountInPage);
   var pageName = 'page' + index;
 
-  var storedDs = goog.ds.Expr.create(this.ds_.getDataName() +
-                                     '/' + pageName).getValue();
+  var storedDs = /** @type {goog.ds.FastDataNode} */(
+      goog.ds.Expr.create(this.ds_.getDataName() + '/' + pageName).getValue());
   if (storedDs) {
     // TODO: Just return rowsData.
-    this.dispatchEvent({
-      type: goog.ui.thousandrows.Model.EventType.UPDATE_PAGE,
-      ds: storedDs
-    });
+    this.dispatchEvent(new goog.ui.thousandrows.Model.Event(
+        goog.ui.thousandrows.Model.EventType.UPDATE_PAGE, storedDs));
   } else {
     this.sendPageRequest_(uri, goog.bind(function(e) {
       var xhrio = e.target;
@@ -268,3 +270,18 @@ goog.ui.thousandrows.Model.prototype.disposeInternal = function() {
   this.ds_ = null;
   goog.base(this, 'disposeInternal');
 };
+
+
+
+
+/**
+ * @param {goog.ui.thousandrows.Model.EventType} type Event type.
+ * @param {goog.ds.FastDataNode} ds Matching nodes, or null if doesn't exist.
+ * @constructor
+ * @extends {goog.events.Event}
+ */
+goog.ui.thousandrows.Model.Event = function(type, ds) {
+  goog.base(this, type);
+  this.ds = ds;
+};
+goog.inherits(goog.ui.thousandrows.Model.Event, goog.events.Event);
