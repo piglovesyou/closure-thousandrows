@@ -39,9 +39,9 @@ This is how to create an instance of thousandrows.
   thousandrows.setModel(model);
 ```
 
-In the case above, you have to adjust and change JSON structure from a server.
-But most of the time, you want adjust and change the way of how to extract data from JSON on the client side.
-In that case, you have to extend Model class and override methods below:
+In the case above, you have to change and adjust JSON structure from a server, because it is hard-coded how to extract data from JSON.
+But most of the time, you want change and adjust the way to find data from JSON in the client side.
+In that case, you have to extend Model class and override some methods:
 
 ```js
   // When you want change GET parameter of XHR, override it.
@@ -53,6 +53,7 @@ In that case, you have to extend Model class and override methods below:
   // When you want change how to extract rows data, override it.
   goog.ui.thousandrows.Model.prototype.extractRowsDataFromJson
 ```
+For details, read JSDoc or post issue to this github project.
 
 
 ## Tests
