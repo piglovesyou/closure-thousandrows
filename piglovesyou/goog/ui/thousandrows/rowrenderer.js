@@ -9,8 +9,9 @@ goog.addSingletonGetter(goog.ui.thousandrows.RowRenderer);
 
 
 /**
- * @param {goog.ui.thousandrows.Row} row
- * @return {Element}
+ * @param {goog.ui.thousandrows.Row} row The component instance
+ *    that we are creating DOM for.
+ * @return {Element} Create outer DOM.
  */
 goog.ui.thousandrows.RowRenderer.prototype.createDom = function(row) {
   return row.getDomHelper().createDom('div', {
@@ -21,12 +22,16 @@ goog.ui.thousandrows.RowRenderer.prototype.createDom = function(row) {
 
 
 /**
- * @param {goog.ui.thousandrows.Row} row
- * @param {Object} record
- * @return {Node}
+ * @param {goog.ui.thousandrows.Row} row The component instance
+ *    that we are creating DOM for.
+ * @param {Object} record to render.
+ * @return {Node} Content DOM of the row.
  */
-goog.ui.thousandrows.RowRenderer.prototype.renderContent = function(row, record) {
-  goog.asserts.assert(record['index'] || record['title'] || record['body'], 'Use custom row renderer.');
+goog.ui.thousandrows.RowRenderer.prototype.renderContent =
+    function(row, record) {
+  goog.asserts.assert(record['index'] ||
+                      record['title'] ||
+                      record['body'], 'Use custom row renderer.');
   var dh = row.getDomHelper();
   var fragment = dh.getDocument().createDocumentFragment();
   dh.append(fragment,
