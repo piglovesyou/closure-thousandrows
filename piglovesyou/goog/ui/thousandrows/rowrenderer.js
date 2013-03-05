@@ -4,10 +4,12 @@ goog.provide('goog.ui.thousandrows.RowRenderer');
 
 
 /**
+ * Base class of RowRenderer. You may want to customize row
+ * rendering, so implement this class and pass it to
+ * ThousandRow's constructor argument.
  * @interface
  */
 goog.ui.thousandrows.RowRenderer = function() {};
-goog.addSingletonGetter(goog.ui.thousandrows.RowRenderer);
 
 
 /**
@@ -33,11 +35,7 @@ goog.ui.thousandrows.RowRenderer.prototype.renderContent = goog.abstractMethod;
  * @constructor
  * @implements {goog.ui.thousandrows.RowRenderer}
  */
-goog.ui.thousandrows.DefaultRowRenderer = function() {
-  goog.base(this);
-};
-goog.inherits(goog.ui.thousandrows.DefaultRowRenderer,
-    goog.ui.thousandrows.RowRenderer);
+goog.ui.thousandrows.DefaultRowRenderer = function() {};
 goog.addSingletonGetter(goog.ui.thousandrows.DefaultRowRenderer);
 
 
