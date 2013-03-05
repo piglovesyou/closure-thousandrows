@@ -39,7 +39,7 @@ goog.ui.thousandrows.Row = function(rowIndex, height,
    * @private
    */
   this.renderer_ = opt_renderer ||
-      goog.ui.thousandrows.RowRenderer.getInstance();
+      goog.ui.thousandrows.DefaultRowRenderer.getInstance();
 };
 goog.inherits(goog.ui.thousandrows.Row, goog.ui.Component);
 

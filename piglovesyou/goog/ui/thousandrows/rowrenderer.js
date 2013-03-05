@@ -1,8 +1,10 @@
 
+goog.provide('goog.ui.thousandrows.DefaultRowRenderer');
 goog.provide('goog.ui.thousandrows.RowRenderer');
 
+
 /**
- * @constructor
+ * @interface
  */
 goog.ui.thousandrows.RowRenderer = function() {};
 goog.addSingletonGetter(goog.ui.thousandrows.RowRenderer);
@@ -13,12 +15,7 @@ goog.addSingletonGetter(goog.ui.thousandrows.RowRenderer);
  *    that we are creating DOM for.
  * @return {Element} Create outer DOM.
  */
-goog.ui.thousandrows.RowRenderer.prototype.createDom = function(row) {
-  return row.getDomHelper().createDom('div', {
-    className: row.getCssName()
-    // style: 'height: ' + this.height_ + 'px'
-  });
-};
+goog.ui.thousandrows.RowRenderer.prototype.createDom = goog.abstractMethod;
 
 
 /**
@@ -27,7 +24,37 @@ goog.ui.thousandrows.RowRenderer.prototype.createDom = function(row) {
  * @param {Object} record to render.
  * @return {Node} Content DOM of the row.
  */
-goog.ui.thousandrows.RowRenderer.prototype.renderContent =
+goog.ui.thousandrows.RowRenderer.prototype.renderContent = goog.abstractMethod;
+
+
+
+
+/**
+ * @constructor
+ * @implements {goog.ui.thousandrows.RowRenderer}
+ */
+goog.ui.thousandrows.DefaultRowRenderer = function() {
+  goog.base(this);
+};
+goog.inherits(goog.ui.thousandrows.DefaultRowRenderer,
+    goog.ui.thousandrows.RowRenderer);
+goog.addSingletonGetter(goog.ui.thousandrows.DefaultRowRenderer);
+
+
+/**
+ * @inheritDoc
+ */
+goog.ui.thousandrows.DefaultRowRenderer.prototype.createDom = function(row) {
+  return row.getDomHelper().createDom('div', {
+    className: row.getCssName()
+  });
+};
+
+
+/**
+ * @inheritDoc
+ */
+goog.ui.thousandrows.DefaultRowRenderer.prototype.renderContent =
     function(row, record) {
   goog.asserts.assert(record['index'] ||
                       record['title'] ||
@@ -40,4 +67,3 @@ goog.ui.thousandrows.RowRenderer.prototype.renderContent =
       dh.createDom('div', 'row-col row-description', record['body']));
   return fragment;
 };
-
