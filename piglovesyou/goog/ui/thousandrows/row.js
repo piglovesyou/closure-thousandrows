@@ -17,13 +17,13 @@ goog.require('goog.ui.thousandrows.RowRenderer');
 /**
  * @param {string|number} rowIndex .
  * @param {number} height .
- * @param {goog.ui.thousandrows.RowRenderer} opt_renderer .
- * @param {goog.dom.DomHelper} opt_domHelper .
+ * @param {goog.ui.thousandrows.RowRenderer=} opt_renderer .
+ * @param {goog.dom.DomHelper=} opt_domHelper .
  * @constructor
  * @extends {goog.ui.Component}
  */
-goog.ui.thousandrows.Row = function(rowIndex,
-                                    height, opt_renderer, opt_domHelper) {
+goog.ui.thousandrows.Row = function(rowIndex, height,
+                                    opt_renderer, opt_domHelper) {
   goog.base(this, opt_domHelper);
 
   this.setId('' + rowIndex);

@@ -30,14 +30,15 @@ goog.require('goog.ui.thousandrows.VirtualScroller');
  * @param {number} rowHeight DOM height of row, by which ThousandRows
  *                           calcurates virtual scroll height.
  * @param {number} rowCountInPage .
+ * @param {goog.ui.thousandrows.RowRenderer=} opt_rowRenderer .
  * @param {?goog.ui.Scroller.ORIENTATION=} opt_orient Only
  *    VERTICAL or BOTH are available.
  * @param {goog.dom.DomHelper=} opt_domHelper .
  * @constructor
  * @extends {goog.ui.thousandrows.VirtualScroller}
  */
-goog.ui.ThousandRows = function(rowHeight,
-                                rowCountInPage, opt_orient, opt_domHelper) {
+goog.ui.ThousandRows = function(rowHeight, rowCountInPage, opt_rowRenderer,
+                                opt_orient, opt_domHelper) {
   goog.asserts.assert(opt_orient != goog.ui.Scroller.ORIENTATION.HORIZONTAL,
                       'Only VERTICAL or BOTH are available.');
   goog.base(this, opt_orient || goog.ui.Scroller.ORIENTATION.VERTICAL,
@@ -54,6 +55,15 @@ goog.ui.ThousandRows = function(rowHeight,
    * @private
    */
   this.rowCountInPage_ = rowCountInPage;
+
+
+  /**
+   * If null, goog.ui.thousandrows.Row uses
+   *    goog.ui.thousandrows.RowRenderer.getInstance() by its self.
+   * @type {?goog.ui.thousandrows.RowRenderer}
+   * @private
+   */
+  this.rowRenderer_ = opt_rowRenderer || null;
 
 
   /**
@@ -328,7 +338,8 @@ goog.ui.ThousandRows.prototype.createPage = function(pageIndex) {
  */
 goog.ui.ThousandRows.prototype.createPage_ = function(pageIndex) {
   return new goog.ui.thousandrows.Page(pageIndex,
-        this.rowCountInPage_, this.rowHeight_, this.getDomHelper());
+        this.rowCountInPage_, this.rowHeight_,
+        this.rowRenderer_, this.getDomHelper());
 };
 
 

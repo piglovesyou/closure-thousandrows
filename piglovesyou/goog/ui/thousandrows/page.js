@@ -20,12 +20,13 @@ goog.require('goog.ui.thousandrows.Row');
  * @param {string|number} pageIndex .
  * @param {number} rowCount .
  * @param {number} rowHeight .
- * @param {goog.dom.DomHelper} opt_domHelper .
+ * @param {goog.ui.thousandrows.RowRenderer=} opt_rowRenderer .
+ * @param {goog.dom.DomHelper=} opt_domHelper .
  * @constructor
  * @extends {goog.ui.Component}
  */
-goog.ui.thousandrows.Page = function(pageIndex,
-                                     rowCount, rowHeight, opt_domHelper) {
+goog.ui.thousandrows.Page = function(pageIndex, rowCount, rowHeight,
+                                     opt_rowRenderer, opt_domHelper) {
   goog.base(this, opt_domHelper);
   this.setId('' + pageIndex);
   this.rowCount_ = rowCount;
@@ -33,7 +34,7 @@ goog.ui.thousandrows.Page = function(pageIndex,
   var dh = this.getDomHelper();
   var rowOffset = pageIndex * rowCount;
   goog.iter.forEach(goog.iter.range(rowCount), function(i) {
-    this.addChild(this.createRow_(rowOffset + i, rowHeight));
+    this.addChild(this.createRow_(rowOffset + i, rowHeight, opt_rowRenderer));
   }, this);
 };
 goog.inherits(goog.ui.thousandrows.Page, goog.ui.Component);
@@ -55,12 +56,15 @@ goog.ui.thousandrows.Page.prototype.getChildAt;
 /**
  * @param {string} id .
  * @param {number} rowHeight .
+ * @param {goog.ui.thousandrows.RowRenderer=} opt_rowRenderer .
  * @return {goog.ui.thousandrows.Row} .
  * @protected
  * @suppress {underscore}
  */
-goog.ui.thousandrows.Page.prototype.createRow_ = function(id, rowHeight) {
-  return new goog.ui.thousandrows.Row(id, rowHeight, null, this.getDomHelper());
+goog.ui.thousandrows.Page.prototype.createRow_ = function(id, rowHeight,
+                                                          opt_rowRenderer) {
+  return new goog.ui.thousandrows.Row(id, rowHeight,
+                                      opt_rowRenderer, this.getDomHelper());
 };
 
 /** @inheritDoc */
